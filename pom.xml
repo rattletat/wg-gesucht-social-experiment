@@ -19,7 +19,6 @@
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>4.12</version>
-            <scope>test</scope>
         </dependency>
         <!-- end::junit[] -->
         <!-- tag::joda[] -->
@@ -47,7 +46,7 @@
                             <transformers>
                                 <transformer
                                     implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                                    <mainClass>wg_gesucht_scraper/HelloWorld</mainClass>
+                                    <mainClass>maven_test/HelloWorld</mainClass>
                                 </transformer>
                             </transformers>
                         </configuration>
