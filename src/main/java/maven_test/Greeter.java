@@ -1,4 +1,4 @@
-package hello;
+package maven_test;
 
 public class Greeter {
     public String sayHello() {
