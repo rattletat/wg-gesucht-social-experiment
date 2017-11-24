@@ -92,11 +92,22 @@ public class CityCrawler {
 
 
     public static void main(String args[]) {
-        CityCrawler crawler = new CityCrawler();
-        crawler.updateCityList();
+        //CityCrawler crawler = new CityCrawler();
+        //crawler.updateCityList();
+    	OfferCrawler oc = new OfferCrawler();
+
+
     }
 
     private static void log(String msg, String... vals) {
         System.out.println(String.format(msg, vals));
     }
+
+	public LinkedList<String> getCityUrls() {
+		return cityUrls;
+	}
+
+	public void setCityUrls(LinkedList<String> cityUrls) {
+		this.cityUrls = cityUrls;
+	}
 }
