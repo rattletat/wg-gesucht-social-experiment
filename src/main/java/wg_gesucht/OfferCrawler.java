@@ -1,10 +1,13 @@
 package wg_gesucht;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.Random;
+import java.util.Scanner;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -16,13 +19,24 @@ public class OfferCrawler {
 	public static final String filePathCities = "./rsc/cities/";
 	public static final String filePathContacts = "./rsc/contacts";
 	public static final String baseContactFilepath = "./rsc/contacts/base.html";
+	public static final String lastContactInfoFilepath = "./rsc/contacts/lastContact.txt";
 	
 	
 	LinkedList<String> cityUrls;
-	
+	int lastContact = 0;
+	int contactCounter = 0;
 	
 	public OfferCrawler()
 	{
+		File lastContFile = new File(lastContactInfoFilepath);
+		try {
+			Scanner sc = new Scanner(lastContFile);
+			lastContact = sc.nextInt();
+			sc.close();
+		} catch (FileNotFoundException e1) {
+			e1.printStackTrace();
+		}
+		
 		cityUrls = new LinkedList<String>();
 		try {
 			readURLsFromFileSystem();
@@ -60,7 +74,6 @@ public class OfferCrawler {
 		//print title
 		System.out.println("-------" + doc.title() + "-------");
 		
-		int contactnr = 0;
 		Elements headlines = doc.getElementsByTag("h3");
 		for (Element headline : headlines)
 		{
@@ -70,16 +83,25 @@ public class OfferCrawler {
 				Element link = headline.selectFirst("a");
 				System.out.println(link.text());
 				String url = link.attr("href");
-				try {
-					saveContactInFile("https://www.wg-gesucht.de/"+url, "contact"+contactnr+"_"+city);
-					contactnr++;
-				} catch (IOException e) {
-					e.printStackTrace();
-				} catch (InterruptedException e) {
-					e.printStackTrace();
+				
+				if (contactCounter <= lastContact)
+				{
+					System.out.println("(contact already extracted)");
+					
 				}
+				else
+				{
+					try {
+						saveContactInFile("https://www.wg-gesucht.de/"+url, "contact"+contactCounter+"_"+city);
+					} catch (IOException e) {
+						e.printStackTrace();
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+				}
+				contactCounter++;
 			}
-			
+		
 		}
 	}
 	
@@ -88,8 +110,8 @@ public class OfferCrawler {
 	{
 		//avoid captcha
 		Random rand = new Random();
-        int n = rand.nextInt(10);
-        Thread.sleep(1000+(n*100));
+		float f = rand.nextFloat();
+        Thread.sleep(1000+(int)(f*10000));
 		
 		boolean infoRead = false;
 		Element div = null;
@@ -100,7 +122,7 @@ public class OfferCrawler {
 			{
 				System.out.println("[WARNING] Captcha gefunden.");
                 System.out.println("Bitte folgenden Link aufrufen und Captcha lösen:");
-                System.out.println(url);
+                System.out.println("http://www.wg-gesucht.de/cuba.html");
 
                 Thread.sleep(10000);
 			}
@@ -119,6 +141,12 @@ public class OfferCrawler {
 		FileWriter fileWriter = new FileWriter(filePathContacts+"/"+contactname+".html");
         fileWriter.write(writeDoc.outerHtml());
         fileWriter.close();
+        
+        FileWriter fileWriter2 = new FileWriter(lastContactInfoFilepath);
+        fileWriter2.write(""+contactCounter);
+        fileWriter2.close();
+        
+        lastContact = contactCounter;
 	}
 	
 	
