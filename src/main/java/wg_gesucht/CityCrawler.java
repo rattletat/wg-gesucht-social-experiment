@@ -9,18 +9,22 @@ import java.io.File;
 import java.io.FileWriter;
 
 import java.util.HashMap;
+import java.util.LinkedList;
 
 public class CityCrawler {
 
     private HashMap<Integer, String> cities;
+    private LinkedList<String> cityUrls;
 
     public CityCrawler() {
         cities = new HashMap<Integer, String>();
+        cityUrls = new LinkedList<String>();
     }
 
     public HashMap<Integer, String>  getCityList() {
         return this.cities;
     }
+    
 
     public void updateCityList() {
         String fst_url = "https://www.wg-gesucht.de/wg-zimmer-in-Aachen.";
@@ -45,6 +49,7 @@ public class CityCrawler {
                     String city = m.group(0);
                     System.out.printf("[%d] %s\n", counter, city);
                     this.cities.put(counter, city);
+                    cityUrls.add(url);
                     File newTextFile = new File(path + "/rsc/cities/" + String.valueOf(counter) + "_" + city + ".html");
 
                     fileWriter = new FileWriter(newTextFile);
