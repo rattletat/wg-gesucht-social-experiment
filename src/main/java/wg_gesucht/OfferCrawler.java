@@ -63,8 +63,10 @@ public class OfferCrawler {
 		    			break;
 		    		}
 		    	}
-		    	
-		    	searchOffersInFile(doc, file.getName());
+		    	String name = file.getName();
+		    	String[] splittedName = name.split("\\.");
+		    	String[] splittedName2 = splittedName[0].split("_", 2);
+		    	searchOffersInFile(doc, splittedName2[1]);
 		    }
 		}
 	}
