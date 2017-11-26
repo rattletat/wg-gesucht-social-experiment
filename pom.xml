@@ -21,14 +21,13 @@
             <version>4.12</version>
         </dependency>
         <!-- end::junit[] -->
-        <!-- tag::joda[] -->
-        <dependency>
-            <groupId>joda-time</groupId>
-            <artifactId>joda-time</artifactId>
-            <version>2.9.2</version>
-        </dependency>
-        <!-- end::joda[] -->
     </dependencies>
+
+
+  <properties>
+    <maven.compiler.source>1.8</maven.compiler.source>
+    <maven.compiler.target>1.8</maven.compiler.target>
+  </properties>
 
     <build>
         <plugins>
