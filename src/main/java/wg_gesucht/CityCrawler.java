@@ -16,7 +16,7 @@ import java.util.LinkedList;
 
 public class CityCrawler {
 
-    private final int delay = 30;
+    private final int delay = 20;
     private final int max_pages = 3;
     private final int max_cities = 10;
 
@@ -82,7 +82,6 @@ public class CityCrawler {
                         System.out.print("[ERROR] Speichern fehlgeschlagen.");
                     }
 
-
                 }
                 // Captcha site starts with "Überprüfung..."
                 else if (title.equals("Überprüfung")) {
@@ -98,12 +97,12 @@ public class CityCrawler {
                     System.out.println(title);
                 }
                 try {
-                    Thread.sleep(30000 + (int) (random_percentage * delay * 1000));
+                    Thread.sleep(10000 + (int) (random_percentage * delay * 1000));
 
                 } catch (InterruptedException ie) {}
             }
+            counter++;
         }
-        counter++;
     }
 
 

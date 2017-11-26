@@ -12,22 +12,33 @@ import org.jsoup.Connection.Response;
 
 public class StealthManager {
 
-    private HashMap<String, String> cookies_memory;
+    private HashMap<String, HashMap<String, String>> cookie_database;
 
 
     public StealthManager() {
-        this.cookies_memory = new HashMap<String, String>();
+        this.cookie_database = new HashMap<String, HashMap<String, String>>();
     }
 
 
     public Response hide(Connection connection) throws IOException {
+        String random_agent = getRandomUserAgent();
+        HashMap<String, String> cookies_memory = getUserCookies(random_agent);
         connection.cookies(cookies_memory);
-        connection.userAgent(getRandomUserAgent());
         connection.timeout(10000);
         Response response = connection.execute();
-        this.cookies_memory.putAll(response.cookies());
+        this.cookie_database.get(random_agent).putAll(response.cookies());
         return response;
     }
+
+    private HashMap<String, String> getUserCookies(String user_agent) {
+        if (this.cookie_database.containsKey(user_agent)) {
+            return this.cookie_database.get(user_agent);
+        }
+        HashMap<String, String> new_cookies = new HashMap<String, String>();
+        this.cookie_database.put(user_agent, new_cookies);
+        return new_cookies;
+    }
+
 
     private static String getRandomUserAgent() {
         String base_path = System.getProperty("user.dir");
