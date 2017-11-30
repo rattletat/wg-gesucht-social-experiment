@@ -23,10 +23,10 @@ public class OfferCrawler {
 	
 	
 	LinkedList<String> cityUrls;
-	int lastContact = 0;
+	int lastContact = -1;
 	int contactCounter = 0;
 	
-	public OfferCrawler()
+	public OfferCrawler() throws IOException
 	{
 		File lastContFile = new File(lastContactInfoFilepath);
 		try {
@@ -34,7 +34,10 @@ public class OfferCrawler {
 			lastContact = sc.nextInt();
 			sc.close();
 		} catch (FileNotFoundException e1) {
-			e1.printStackTrace();
+			System.err.println("Could not find " + lastContactInfoFilepath+ ". Creating new one.");
+			FileWriter fileWriter = new FileWriter(lastContactInfoFilepath);
+	        fileWriter.write("-1");
+	        fileWriter.close();
 		}
 		
 		cityUrls = new LinkedList<String>();
