@@ -121,6 +121,7 @@ public class OfferCrawler {
 		boolean infoRead = false;
 		Element contactDiv = null;
 		Elements headlineElements  = null;
+		Element title = null;
 		while (!infoRead)
 		{
 			Document readDoc = Jsoup.connect(url).get();
@@ -136,6 +137,7 @@ public class OfferCrawler {
 			{
 				contactDiv = readDoc.selectFirst("div[class=\"panel panel-rhs-default rhs_contact_information hidden-sm\"]");
 				headlineElements = readDoc.select("h3:matchesOwn(Kosten|WG-Details)");
+				title = readDoc.selectFirst("title");
 				infoRead = true;
 			}
 		}
@@ -143,6 +145,8 @@ public class OfferCrawler {
 		File basefile = new File(baseContactFilepath);
 		Document writeDoc = Jsoup.parse(basefile, "UTF-8", url);
 		Element body = writeDoc.body();
+		Element head = writeDoc.head();
+		title.appendTo(head);
 		for (Element h: headlineElements)
 		{
 			Element div = h.parent().parent();
