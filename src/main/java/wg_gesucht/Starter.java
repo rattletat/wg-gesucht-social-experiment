@@ -5,7 +5,8 @@ import java.io.IOException;
 public class Starter {
 	
 	final static boolean startCityCrawler = false;
-	final static boolean startOfferCrawler = true;
+	final static boolean startOfferCrawler = false;
+	final static boolean startOfferFilter = true;
 
 	public static void main(String[] args) throws IOException {
 
@@ -19,6 +20,11 @@ public class Starter {
 		if (startOfferCrawler) 
 		{
 			new OfferCrawler();
+		}
+		
+		if (startOfferFilter) {
+			OfferFilter of = new OfferFilter(true, false, 20, 30);
+			of.printFilteredDocs();
 		}
 	}
 
