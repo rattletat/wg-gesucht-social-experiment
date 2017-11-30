@@ -25,6 +25,14 @@ public class Starter {
 		if (startOfferFilter) {
 			OfferFilter of = new OfferFilter(true, false, 20, 30);
 			of.printFilteredDocs();
+			
+			DocSplit ds = of.randomSplitHalf();
+			System.out.println();
+			System.out.println("Half 1");
+			OfferFilter.printDocArray(ds.d1);
+			System.out.println();
+			System.out.println("Half 2");
+			OfferFilter.printDocArray(ds.d2);
 		}
 	}
 

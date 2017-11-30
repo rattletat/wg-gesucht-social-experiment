@@ -2,6 +2,7 @@ package wg_gesucht;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.LinkedList;
 
 import org.jsoup.Jsoup;
@@ -105,5 +106,36 @@ public class OfferFilter {
 			System.out.println(d.title());
 		}
 	}
+	
+	public static void printDocArray(Document[] docs)
+	{
+		for (Document d: docs)
+		{
+			System.out.println(d.title());
+		}
+	}
+	
+	public DocSplit randomSplitHalf()
+	{
+		LinkedList<Document> docsClone = (LinkedList<Document>)filteredDocs.clone();
+		Collections.shuffle(docsClone);
+		Document[] d1 = docsClone.subList(0, docsClone.size() / 2).toArray(new Document[0]);
+		Document[] d2 = docsClone.subList(docsClone.size() / 2 + 1, docsClone.size()).toArray(new Document[0]);
+		return new DocSplit(d1, d2);
+	}
 
+}
+
+
+class DocSplit
+{
+	Document[] d1;
+	Document[] d2;
+	
+	public DocSplit(Document[] d1, Document[] d2) {
+		this.d1 = d1;
+		this.d2 = d2;
+	}
+	
+	
 }
