@@ -24,6 +24,7 @@ public class StealthManager {
         String random_agent = getRandomUserAgent();
         HashMap<String, String> cookies_memory = getUserCookies(random_agent);
         connection.cookies(cookies_memory);
+        connection.userAgent(random_agent);
         connection.timeout(10000);
         Response response = connection.execute();
         this.cookie_database.get(random_agent).putAll(response.cookies());
@@ -57,7 +58,7 @@ public class StealthManager {
 
         Random r = new Random();
         String random_agent = lines.get(r.nextInt(lines.size()));
-        System.out.println("[INFO] Random user agent used: " + random_agent);
+        //System.out.println("[INFO] Random user agent used: " + random_agent);
         return random_agent;
     }
 }

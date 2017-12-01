@@ -3,64 +3,95 @@ package wg_gesucht;
 import java.util.Random;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
-
 import org.jsoup.Connection.Response;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.HashMap;
-import java.util.LinkedList;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 
 public class CityCrawler {
 
-    private final int delay = 20;
-    private final int max_pages = 3;
-    private final int max_cities = 10;
+    private final static int delay = 10;
+    private final static int max_pages = 1;
+    private final static int max_cities = 144; // Last City on wg-gesucht 'Zwickau' with id 144
 
     private HashMap<Integer, String> cities;
-    private LinkedList<String> city_urls;
+    private HashMap<Integer, String> city_urls;
     private StealthManager stealth_manager;
 
     public CityCrawler() {
-        cities = new HashMap<Integer, String>();
-        city_urls = new LinkedList<String>();
+        this.cities = new HashMap<Integer, String>();
         this.stealth_manager = new StealthManager();
+        try {
+            this.city_urls = MemoryManager.readURLs();
+
+
+        } catch (Exception e) {
+            System.out.println("[WARNING] Failed to load URLs.");
+            this.city_urls = new HashMap<>();
+        }
     }
 
     public HashMap<Integer, String>  getCityList() {
         return this.cities;
     }
 
+    public void updateAll() {
+        ArrayList<Integer> array_list = new ArrayList<Integer>();
+        for (int i = 1; i <= max_cities; i++) {
+            array_list.add(i);
+        }
+        updateCityList(array_list);
+    }
+
     /**
       Updates and saves the various appartment-offer sites classfied by site in /rsc/cities.
-      Quantity depends on 'max_cities' and 'max_pages'.
+      @param list Updates only citys with IDs handed in list.
      **/
-    public void updateCityList() {
+    public void updateCityList(ArrayList<Integer> array_list) {
         String fst_url = "https://www.wg-gesucht.de/wg-zimmer-in-Aachen.";
         String snd_url = ".0.1.0.html";
-        int counter = 1;
+        Collections.shuffle(array_list);
 
-        while (counter <= max_cities) {
+        Runtime.getRuntime().addShutdownHook(new Thread() {
+            @Override
+            public void run() {
+                MemoryManager.saveURLs(city_urls);
+                System.out.println("[INFO] Saved URL List.");
+            }
+        });
+
+        for (int city_id : array_list) {
 
             for (int page_number = 0; page_number < max_pages; page_number++) {
                 Random rand = new Random();
                 float random_percentage = rand.nextFloat();
 
-                //assemble url
-                String[] urlBack = snd_url.split("\\.");
-                urlBack[urlBack.length - 2] = String.valueOf(page_number);
-                snd_url = String.join(".", urlBack);
-                String url = fst_url + String.valueOf(counter) + snd_url;
+                String url = "";
+                if (!this.city_urls.containsKey(city_id)) {
+                    //assemble url
+                    String[] url_back = snd_url.split("\\.");
+                    url_back[url_back.length - 2] = String.valueOf(page_number);
+                    snd_url = String.join(".", url_back);
+                    url = fst_url + String.valueOf(city_id) + snd_url;
+                } else url = this.city_urls.get(city_id) + ".0.1." + String.valueOf(page_number) + ".html";
+                System.out.println(url);
 
                 Document doc = null;
+                String redirected_url = "";
                 try {
                     Response res = stealth_manager.hide(Jsoup.connect(url));
+                    redirected_url = res.url().toString();
                     doc = res.parse();
                 } catch (IOException io) {
                     System.out.println("[ERROR] Fehler beim connecten.");
+                    System.out.println(url);
                     System.exit(1);
                 }
 
@@ -73,12 +104,13 @@ public class CityCrawler {
                 // City name found matching 'Angebote in ...' and not empty
                 if (m.find() && !m.group(0).matches("")) {
                     String city = m.group(0).replaceAll(" ", "-");
-                    System.out.printf("[%d-%d] %s\n", counter, page_number, city);
+                    System.out.printf("[%d-%d] %s\n", city_id, page_number, city);
 
-                    this.cities.put(counter, city);
-                    city_urls.add(url);
-
-                    if (!savePage(counter, city, page_number, content)) {
+                    String cleaned_url = String.join(".", Arrays.copyOfRange(redirected_url.split("\\."), 0, 4));
+                    // Save URL and city name
+                    this.cities.put(city_id, city);
+                    this.city_urls.put(city_id, cleaned_url);
+                    if (!MemoryManager.saveCityPage(city_id, city, page_number, content)) {
                         System.out.print("[ERROR] Speichern fehlgeschlagen.");
                     }
 
@@ -87,21 +119,20 @@ public class CityCrawler {
                 else if (title.equals("Überprüfung")) {
                     System.out.println("[HINT] Captcha gefunden.");
                     System.out.println("Bitte folgenden Link aufrufen und Captcha lösen:");
-                    System.out.println(url);
+                    System.out.println("https://www.wg-gesucht.de/cuba.html");
                 }
 
                 // Unknown site found
                 else {
-                    this.cities.put(counter, "None");
+                    this.cities.put(city_id, "None");
                     System.out.println("[WARNING] Kein Stadtname gefunden:");
-                    System.out.println(title);
+                    System.out.println("ID: " + city_id + "Title: " + title);
                 }
                 try {
                     Thread.sleep(10000 + (int) (random_percentage * delay * 1000));
 
                 } catch (InterruptedException ie) {}
             }
-            counter++;
         }
     }
 
@@ -114,48 +145,4 @@ public class CityCrawler {
      * @return              boolean: 'true' means that the saving was successful
      *                               'false' means that an error occured
     **/
-    private boolean savePage(int city_id, String city_name, int page_number, String content) {
-        String base_path = System.getProperty("user.dir");
-        String city_id_str = String.valueOf(city_id);
-        String page_number_str = String.valueOf(page_number);
-
-        String path = base_path + "/rsc/cities/" + city_id_str + "_"
-                      + city_name + "_p" + page_number_str + ".html";
-
-        File text_file = new File(path);
-
-        try(FileWriter file_writer = new FileWriter(text_file)) {
-            file_writer.write(content);
-        } catch (IOException ioe) {
-            return false;
-        }
-        return true;
     }
-
-
-    private String getCityID(int number) {
-
-        return "TODO";
-    }
-
-
-    public static void main(String args[]) {
-        CityCrawler crawler = new CityCrawler();
-        crawler.updateCityList();
-        //OfferCrawler oc = new OfferCrawler();
-
-
-    }
-
-    private static void log(String msg, String... vals) {
-        System.out.println(String.format(msg, vals));
-    }
-
-    public LinkedList<String> getCityUrls() {
-        return city_urls;
-    }
-
-    public void setCityUrls(LinkedList<String> city_urls) {
-        this.city_urls = city_urls;
-    }
-}

@@ -18,7 +18,7 @@
             <configuration>
               <transformers>
                 <transformer>
-                  <mainClass>wg_gesucht/CityCrawler</mainClass>
+                  <mainClass>wg_gesucht/CrawlerLauncher</mainClass>
                 </transformer>
               </transformers>
             </configuration>
