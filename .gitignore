@@ -20,4 +20,6 @@ target/
 *.swo
 *~
 
-rsc/
+rsc/cities/*
+rsc/contacts/*
+!rsc/contacts/base.html

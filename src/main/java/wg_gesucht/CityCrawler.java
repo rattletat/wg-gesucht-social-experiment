@@ -14,7 +14,6 @@ import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-
 public class CityCrawler {
 
     private final static int delay = 10;
@@ -135,14 +134,4 @@ public class CityCrawler {
             }
         }
     }
-
-
-    /** Saves HTML-content to /rsc/cities with '[cityID]_[city_name]_p[page].html'.
-     * @param city_id       City ID at wg-gesucht.de
-     * @param city_name     Name of the city
-     * @param page_number   Number of the page *
-     * @param content       HTML content which will be saved
-     * @return              boolean: 'true' means that the saving was successful
-     *                               'false' means that an error occured
-    **/
-    }
+}

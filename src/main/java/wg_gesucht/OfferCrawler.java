@@ -23,10 +23,10 @@ public class OfferCrawler {
 	
 	
 	LinkedList<String> cityUrls;
-	int lastContact = 0;
+	int lastContact = -1;
 	int contactCounter = 0;
 	
-	public OfferCrawler()
+	public OfferCrawler() throws IOException
 	{
 		File lastContFile = new File(lastContactInfoFilepath);
 		try {
@@ -34,7 +34,10 @@ public class OfferCrawler {
 			lastContact = sc.nextInt();
 			sc.close();
 		} catch (FileNotFoundException e1) {
-			e1.printStackTrace();
+			System.err.println("Could not find " + lastContactInfoFilepath+ ". Creating new one.");
+			FileWriter fileWriter = new FileWriter(lastContactInfoFilepath);
+	        fileWriter.write("-1");
+	        fileWriter.close();
 		}
 		
 		cityUrls = new LinkedList<String>();
@@ -116,7 +119,9 @@ public class OfferCrawler {
         Thread.sleep(1000+(int)(f*10000));
 		
 		boolean infoRead = false;
-		Element div = null;
+		Element contactDiv = null;
+		Elements headlineElements  = null;
+		Element title = null;
 		while (!infoRead)
 		{
 			Document readDoc = Jsoup.connect(url).get();
@@ -130,7 +135,9 @@ public class OfferCrawler {
 			}
 			else
 			{
-				div = readDoc.selectFirst("div[class=\"panel panel-rhs-default rhs_contact_information hidden-sm\"]");
+				contactDiv = readDoc.selectFirst("div[class=\"panel panel-rhs-default rhs_contact_information hidden-sm\"]");
+				headlineElements = readDoc.select("h3:matchesOwn(Kosten|WG-Details)");
+				title = readDoc.selectFirst("title");
 				infoRead = true;
 			}
 		}
@@ -138,7 +145,14 @@ public class OfferCrawler {
 		File basefile = new File(baseContactFilepath);
 		Document writeDoc = Jsoup.parse(basefile, "UTF-8", url);
 		Element body = writeDoc.body();
-		div.appendTo(body);
+		Element head = writeDoc.head();
+		title.appendTo(head);
+		for (Element h: headlineElements)
+		{
+			Element div = h.parent().parent();
+			div.appendTo(body);
+		}
+		contactDiv.appendTo(body);
 		
 		FileWriter fileWriter = new FileWriter(filePathContacts+"/"+contactname+".html");
         fileWriter.write(writeDoc.outerHtml());
