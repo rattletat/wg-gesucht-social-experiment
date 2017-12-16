@@ -7,8 +7,9 @@ public class CrawlerLauncher {
     final static boolean startCityCrawler = false;
     final static boolean startOfferCrawler = false;
     final static boolean startOfferFilter = true;
+    final static boolean startMessageWriter = true;
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException, InterruptedException {
 
         if (startCityCrawler) {
             CityCrawler crawler = new CityCrawler();
@@ -31,6 +32,12 @@ public class CrawlerLauncher {
             System.out.println();
             System.out.println("Half 2");
             OfferFilter.printDocArray(ds.d2);
+            
+            if (startMessageWriter)
+            {
+            	System.out.println();
+            	new MessageWriter(ds);
+            }
         }
     }
 
