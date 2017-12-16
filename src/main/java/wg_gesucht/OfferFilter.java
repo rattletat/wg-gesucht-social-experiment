@@ -48,6 +48,9 @@ public class OfferFilter {
 	
 	public boolean checkDoc(Document doc)
 	{
+		//check base.html
+		if (doc.title().equals("")) return false;
+		
 		//check availability
 		if (!doc.getElementsContainingOwnText("Kontaktaufnahme zur Zeit nicht möglich").isEmpty()) {
 			System.out.println("unavailable: "+doc.title() );
@@ -117,6 +120,7 @@ public class OfferFilter {
 	
 	public DocSplit randomSplitHalf()
 	{
+		@SuppressWarnings("unchecked")
 		LinkedList<Document> docsClone = (LinkedList<Document>)filteredDocs.clone();
 		Collections.shuffle(docsClone);
 		Document[] d1 = docsClone.subList(0, docsClone.size() / 2).toArray(new Document[0]);

@@ -4,9 +4,9 @@ import java.io.IOException;
 
 public class CrawlerLauncher {
 
-    final static boolean startCityCrawler = true;
+    final static boolean startCityCrawler = false;
     final static boolean startOfferCrawler = false;
-    final static boolean startOfferFilter = false;
+    final static boolean startOfferFilter = true;
 
     public static void main(String[] args) throws IOException {
 
