@@ -15,17 +15,15 @@ public class OfferFilter {
 	LinkedList<Document> filteredDocs;
 	boolean male;
 	boolean female;
-	int minAge;
-	int maxAge;
+	int age;
 	
-	public OfferFilter (boolean male, boolean female, int minAge, int maxAge)
+	public OfferFilter (boolean male, boolean female, int age)
 	{
 		filteredDocs = new LinkedList<Document>();
 		
 		this.male = male;
 		this.female = female;
-		this.minAge = minAge;
-		this.maxAge = maxAge;
+		this.age = age;
 		
 		
 		File folderContacts = new File(OfferCrawler.filePathContacts);
@@ -86,7 +84,7 @@ public class OfferFilter {
 		{
 			minAgeParsed = Integer.parseInt(minAgeString);
 			maxAgeParsed = Integer.parseInt(maxAgeString);
-			if (minAgeParsed < minAge ||  maxAgeParsed > maxAge) {
+			if (minAgeParsed > age ||  maxAgeParsed < age) {
 				System.out.println("not in age boundaries: "+doc.title());
 				return false;
 			}

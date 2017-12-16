@@ -1,22 +1,32 @@
 package wg_gesucht;
 
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.LinkedList;
+import java.util.Properties;
 
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
 public class MessageWriter {
 
-	public static final String filePathMessages = "./rsc/messages";
+	public static final String filePathMessages = "./rsc/messages/";
+	public static final String filePathPersona = "./rsc/personas/persona1.properties";
 	
 	public MessageWriter(DocSplit ds) throws InterruptedException, IOException {
-		writeMsgs(ds.d1);
+		
+		//read persona
+		FileReader reader = new FileReader(filePathPersona);
+		Properties personaProps = new Properties();
+		personaProps.load(reader);
+		
+		writeMsgs(ds.d1, personaProps);
 		System.out.println();
-		writeMsgs(ds.d2);
+		writeMsgs(ds.d2, personaProps);
 	}
 	
-	public void writeMsgs(Document[] docs) throws InterruptedException, IOException
+	public void writeMsgs(Document[] docs, Properties personaProps) throws InterruptedException, IOException
 	{
 		for (Document doc : docs)
 		{
@@ -54,27 +64,47 @@ public class MessageWriter {
 			String contactName = sb.toString();
 			
 			String salutation;
+			boolean informal;
 			System.out.print(contactName+": ");
 			switch(contactGender)
 			{
 			case 'f':
 				//informal
-				if (nameComponents.size() == 1) salutation = "Liebe "+nameComponents.get(0)+", ";
+				if (nameComponents.size() == 1) {
+					informal = true;
+					salutation = "Liebe "+nameComponents.get(0)+", ";
+				}
 				//formal
-				else salutation = "Sehr geehrte Frau "+nameComponents.get(nameComponents.size() - 1)+", ";
+				else {
+					informal = false;
+					salutation = "Sehr geehrte Frau "+nameComponents.get(nameComponents.size() - 1)+", ";
+				}
 				break;
 			case 'm':
 				//informal
-				if (nameComponents.size() == 1) salutation = "Lieber "+nameComponents.get(0)+", ";
+				if (nameComponents.size() == 1) {
+					informal = true;
+					salutation = "Lieber "+nameComponents.get(0)+", ";
+				}
 				//formal
-				else salutation = "Sehr geehrter Herr "+nameComponents.get(nameComponents.size() - 1)+", ";
+				else {
+					informal = false;
+					salutation = "Sehr geehrter Herr "+nameComponents.get(nameComponents.size() - 1)+", ";
+				}
 				break;
 			default:
+				informal = true;
 				salutation = "Hallo "+contactName+", ";
 				break;
 			}
 			System.out.print(salutation);
 			System.out.println();
+			
+			Properties msgProps = new Properties();
+			msgProps.setProperty("url", url);
+			if (informal) msgProps.setProperty("msg", salutation+personaProps.getProperty("textInformal"));
+			else msgProps.setProperty("msg", salutation+personaProps.getProperty("textFormal"));
+			msgProps.store(new FileWriter(filePathMessages+contactName+".properties"), "");
 		}
 	}
 }

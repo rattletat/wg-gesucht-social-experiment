@@ -22,7 +22,7 @@ public class CrawlerLauncher {
         }
 
         if (startOfferFilter) {
-            OfferFilter of = new OfferFilter(true, false, 20, 30);
+            OfferFilter of = new OfferFilter(true, false, 25);
             of.printFilteredDocs();
 
             DocSplit ds = of.randomSplitHalf();
