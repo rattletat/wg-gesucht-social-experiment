@@ -124,7 +124,7 @@ public class OfferFilter {
 		LinkedList<Document> docsClone = (LinkedList<Document>)filteredDocs.clone();
 		Collections.shuffle(docsClone);
 		Document[] d1 = docsClone.subList(0, docsClone.size() / 2).toArray(new Document[0]);
-		Document[] d2 = docsClone.subList(docsClone.size() / 2 + 1, docsClone.size()).toArray(new Document[0]);
+		Document[] d2 = docsClone.subList(docsClone.size() / 2, docsClone.size()).toArray(new Document[0]);
 		return new DocSplit(d1, d2);
 	}
 

@@ -2,7 +2,6 @@ package wg_gesucht;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.LinkedList;
@@ -112,35 +111,11 @@ public class OfferCrawler {
 	
 	
 	public void saveContactInFile(String url, String contactname) throws IOException, InterruptedException
-	{
-		//avoid captcha
-		Random rand = new Random();
-		float f = rand.nextFloat();
-        Thread.sleep(1000+(int)(f*10000));
-		
-		boolean infoRead = false;
-		Element contactDiv = null;
-		Elements headlineElements  = null;
-		Element title = null;
-		while (!infoRead)
-		{
-			Document readDoc = Jsoup.connect(url).get();
-			if (readDoc.title().equals("Überprüfung"))
-			{
-				System.out.println("[WARNING] Captcha gefunden.");
-                System.out.println("Bitte folgenden Link aufrufen und Captcha lösen:");
-                System.out.println("http://www.wg-gesucht.de/cuba.html");
-
-                Thread.sleep(10000);
-			}
-			else
-			{
-				contactDiv = readDoc.selectFirst("div[class=\"panel panel-rhs-default rhs_contact_information hidden-sm\"]");
-				headlineElements = readDoc.select("h3:matchesOwn(Kosten|WG-Details)");
-				title = readDoc.selectFirst("title");
-				infoRead = true;
-			}
-		}
+	{		
+		Document readDoc = URLconnector.connect(url);
+		Element contactDiv = readDoc.selectFirst("div[class=\"panel panel-rhs-default rhs_contact_information hidden-sm\"]");
+		Elements headlineElements = readDoc.select("h3:matchesOwn(Kosten|WG-Details)");
+		Element title = readDoc.selectFirst("title");
 		
 		File basefile = new File(baseContactFilepath);
 		Document writeDoc = Jsoup.parse(basefile, "UTF-8", url);
