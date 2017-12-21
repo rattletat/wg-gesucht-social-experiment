@@ -11,7 +11,7 @@ public class URLconnector {
 	private int min_waiting_sec = 5;
 	private int variance = 5;
 	
-	StealthManager stealth_manager = new StealthManager();
+	private StealthManager stealth_manager = new StealthManager();
 	
 	/** 
 		Delayed connection to a site and uses random useragents and cookies to act human.
