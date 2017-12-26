@@ -48,63 +48,71 @@ public class MessageWriter {
 			String url = doc.selectFirst("a[class=\"btn btn-block btn-md btn-orange\"]").attr("href");
 			Document contactForm = URLconnector.connect(url);
 			Element contactNameContainer = contactForm.getElementsContainingOwnText("Nachricht an").first();
-			String[] contactNameText = contactNameContainer.text().split(" ");
-			
-			StringBuilder sb = new StringBuilder();
-			LinkedList<String> nameComponents = new LinkedList<String>();
-			int i = 2;
-			while (!contactNameText[i].equals("senden:"))
+			if (contactNameContainer == null)
 			{
-				nameComponents.add(contactNameText[i]);
-				sb.append(contactNameText[i]);
-				sb.append(" ");
-				i++;
+				System.out.println("no contact link found");
 			}
-			sb.deleteCharAt(sb.length()-1);
-			String contactName = sb.toString();
-			
-			String salutation;
-			boolean informal;
-			System.out.print(contactName+": ");
-			switch(contactGender)
+			else
 			{
-			case 'f':
-				//informal
-				if (nameComponents.size() == 1) {
+				String[] contactNameText = contactNameContainer.text().split(" ");
+				
+				StringBuilder sb = new StringBuilder();
+				LinkedList<String> nameComponents = new LinkedList<String>();
+				int i = 2;
+				while (!contactNameText[i].equals("senden:"))
+				{
+					nameComponents.add(contactNameText[i]);
+					sb.append(contactNameText[i]);
+					sb.append(" ");
+					i++;
+				}
+				sb.deleteCharAt(sb.length()-1);
+				String contactName = sb.toString();
+				
+				String salutation;
+				boolean informal;
+				System.out.print(contactName+": ");
+				switch(contactGender)
+				{
+				case 'f':
+					//informal
+					if (nameComponents.size() == 1) {
+						informal = true;
+						salutation = "Liebe "+nameComponents.get(0)+", ";
+					}
+					//formal
+					else {
+						informal = false;
+						salutation = "Sehr geehrte Frau "+nameComponents.get(nameComponents.size() - 1)+", ";
+					}
+					break;
+				case 'm':
+					//informal
+					if (nameComponents.size() == 1) {
+						informal = true;
+						salutation = "Lieber "+nameComponents.get(0)+", ";
+					}
+					//formal
+					else {
+						informal = false;
+						salutation = "Sehr geehrter Herr "+nameComponents.get(nameComponents.size() - 1)+", ";
+					}
+					break;
+				default:
 					informal = true;
-					salutation = "Liebe "+nameComponents.get(0)+", ";
+					salutation = "Hallo "+contactName+", ";
+					break;
 				}
-				//formal
-				else {
-					informal = false;
-					salutation = "Sehr geehrte Frau "+nameComponents.get(nameComponents.size() - 1)+", ";
-				}
-				break;
-			case 'm':
-				//informal
-				if (nameComponents.size() == 1) {
-					informal = true;
-					salutation = "Lieber "+nameComponents.get(0)+", ";
-				}
-				//formal
-				else {
-					informal = false;
-					salutation = "Sehr geehrter Herr "+nameComponents.get(nameComponents.size() - 1)+", ";
-				}
-				break;
-			default:
-				informal = true;
-				salutation = "Hallo "+contactName+", ";
-				break;
+				System.out.print(salutation);
+				System.out.println();
+				
+				Properties msgProps = new Properties();
+				msgProps.setProperty("url", url);
+				if (informal) msgProps.setProperty("msg", salutation+personaProps.getProperty("textInformal"));
+				else msgProps.setProperty("msg", salutation+personaProps.getProperty("textFormal"));
+				msgProps.store(new FileWriter(filePathMessages+contactName+".properties"), "");
 			}
-			System.out.print(salutation);
-			System.out.println();
 			
-			Properties msgProps = new Properties();
-			msgProps.setProperty("url", url);
-			if (informal) msgProps.setProperty("msg", salutation+personaProps.getProperty("textInformal"));
-			else msgProps.setProperty("msg", salutation+personaProps.getProperty("textFormal"));
-			msgProps.store(new FileWriter(filePathMessages+contactName+".properties"), "");
 		}
 	}
 }
