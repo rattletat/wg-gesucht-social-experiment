@@ -8,32 +8,42 @@ import org.jsoup.nodes.Document;
 
 public class URLconnector {
 	
-	public static Document connect(String url) throws InterruptedException, IOException
+	private int min_waiting_sec = 5;
+	private int variance = 5;
+	
+	private StealthManager stealth_manager = new StealthManager();
+	
+	/** 
+		Delayed connection to a site and uses random useragents and cookies to act human.
+	**/
+	public static Response connect(String url) throws InterruptedException, IOException
 	{
-		boolean infoRead = false;
-		Document readDoc = null;
-		while (!infoRead)
+		boolean connection_successful = false;
+		while (!connection_successful)
 		{
-			//avoid captcha
+			// Randomized waiting time
 			Random rand = new Random();
-			float f = rand.nextFloat();
-			Thread.sleep(1000+(int)(f*10000));
+			float percentage = rand.nextFloat();
+			Thread.sleep(min_waiting_time*1000 + (int)(percentage*1000*variance));
 			
-			readDoc = Jsoup.connect(url).get();
-			if (readDoc.title().equals("Überprüfung"))
+			// Establish connection using stealth techniques
+			response = stealth_manager.hide(url);
+			doc = response.parse();
+			
+			// Captcha found
+			if (doc.title().equals("ÃœberprÃ¼fung"))
 			{
 				System.out.println("[WARNING] Captcha gefunden.");
-	            System.out.println("Bitte folgenden Link aufrufen und Captcha lösen:");
-	            System.out.println("http://www.wg-gesucht.de/cuba.html");
-
-	            Thread.sleep(10000);
+	            		System.out.println("Bitte folgenden Link aufrufen und Captcha lÃ¶sen:");
+	            		System.out.println("http://www.wg-gesucht.de/cuba.html");
+				Thread.sleep(10000);
 			}
 			else
 			{
-				infoRead = true;
+				connection_successful = true;
 			}
 		}
-		return readDoc;
+		return response;
 	}
 
 }

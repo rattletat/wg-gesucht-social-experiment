@@ -37,10 +37,12 @@ public class CityCrawler {
         }
     }
 
+    // Returns city list
     public HashMap<Integer, String>  getCityList() {
         return this.cities;
     }
 
+    // Updates all 144 cities
     public void updateAll() {
         ArrayList<Integer> array_list = new ArrayList<Integer>();
         for (int i = 1; i <= max_cities; i++) {
