@@ -1,5 +1,6 @@
 package wg_gesucht;
 
+import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -25,13 +26,13 @@ public class MessageWriter {
 		Properties personaProps2 = new Properties();
 		personaProps2.load(reader);
 		
-		writeMsgs(ds.d1, personaProps1);
+		writeMsgs(ds.d1, personaProps1, "group1");
 		System.out.println();
-		writeMsgs(ds.d2, personaProps2);
+		writeMsgs(ds.d2, personaProps2, "group2");
 		reader.close();
 	}
 	
-	public void writeMsgs(Document[] docs, Properties personaProps) throws InterruptedException, IOException
+	public void writeMsgs(Document[] docs, Properties personaProps, String folderName) throws InterruptedException, IOException
 	{
 		for (Document doc : docs)
 		{
@@ -115,7 +116,14 @@ public class MessageWriter {
 				msgProps.setProperty("url", url);
 				if (informal) msgProps.setProperty("msg", salutation+personaProps.getProperty("textInformal"));
 				else msgProps.setProperty("msg", salutation+personaProps.getProperty("textFormal"));
-				msgProps.store(new FileWriter(filePathMessages+contactName+".properties"), "");
+				
+				String folderToSave = filePathMessages+folderName+"/"+contactName+"/";
+				File dir = new File(folderToSave);
+				dir.mkdirs();
+				msgProps.store(new FileWriter(folderToSave+contactName+".properties"), "");
+				FileWriter fileWriter = new FileWriter(folderToSave+contactName+".html");
+		        fileWriter.write(contactForm.outerHtml());
+		        fileWriter.close();
 			}
 			
 		}
