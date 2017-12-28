@@ -12,14 +12,17 @@ import org.jsoup.select.Elements;
 
 public class OfferFilter {
 	
-	LinkedList<Document> filteredDocs;
+	LinkedList<DocBundle> filteredDocs;
 	boolean male;
 	boolean female;
 	int age;
 	
+	DocBundle[] group1;
+	DocBundle[] group2;
+	
 	public OfferFilter (boolean male, boolean female, int age)
 	{
-		filteredDocs = new LinkedList<Document>();
+		filteredDocs = new LinkedList<DocBundle>();
 		
 		this.male = male;
 		this.female = female;
@@ -35,16 +38,32 @@ public class OfferFilter {
 				Document doc;
 				try {
 					doc = Jsoup.parse(f, "UTF-8", "");
-					if (checkDoc(doc)) filteredDocs.add(doc);
+					checkDocAndAdd(doc);
 				} catch (IOException e) {
+					e.printStackTrace();
+				}
+				catch(InterruptedException e) {
 					e.printStackTrace();
 				}
 			}
 		}
-		
+		randomSplitHalf();
 	}
 	
-	public boolean checkDoc(Document doc)
+	public void writeMsgs() throws InterruptedException, IOException
+	{
+		MessageWriter msgWriter = new MessageWriter();
+		for (DocBundle db : group1)
+		{
+			msgWriter.writeMsg(db.offerDoc, db.contactForm, 1);
+		}
+		for (DocBundle db : group2)
+		{
+			msgWriter.writeMsg(db.offerDoc, db.contactForm, 2);
+		}
+	}
+	
+	public boolean checkDocAndAdd(Document doc) throws IOException, InterruptedException
 	{
 		//check base.html
 		if (doc.title().equals("")) return false;
@@ -95,17 +114,18 @@ public class OfferFilter {
 			return false;
 		}
 		
+		//check availability of contactForm
+		String url = doc.selectFirst("a[class=\"btn btn-block btn-md btn-orange\"]").attr("href");
+		Document contactForm = URLconnector.connect(url).parse();
+		Element contactNameContainer = contactForm.getElementsContainingOwnText("Nachricht an").first();
+		if (contactNameContainer == null) {
+			System.out.println("no contact link found: "+ doc.title());
+			return false;
+		} else {
+			filteredDocs.add(new DocBundle(doc, contactForm));
+		}
 		
 		return true;
-	}
-	
-	
-	public void printFilteredDocs()
-	{
-		for (Document d: filteredDocs)
-		{
-			System.out.println(d.title());
-		}
 	}
 	
 	public static void printDocArray(Document[] docs)
@@ -116,27 +136,26 @@ public class OfferFilter {
 		}
 	}
 	
-	public DocSplit randomSplitHalf()
+	public void randomSplitHalf()
 	{
 		@SuppressWarnings("unchecked")
-		LinkedList<Document> docsClone = (LinkedList<Document>)filteredDocs.clone();
+		LinkedList<DocBundle> docsClone = (LinkedList<DocBundle>)filteredDocs.clone();
 		Collections.shuffle(docsClone);
-		Document[] d1 = docsClone.subList(0, docsClone.size() / 2).toArray(new Document[0]);
-		Document[] d2 = docsClone.subList(docsClone.size() / 2, docsClone.size()).toArray(new Document[0]);
-		return new DocSplit(d1, d2);
+		group1 = docsClone.subList(0, docsClone.size() / 2).toArray(new DocBundle[0]);
+		group2 = docsClone.subList(docsClone.size() / 2, docsClone.size()).toArray(new DocBundle[0]);
 	}
 
 }
 
 
-class DocSplit
+class DocBundle
 {
-	Document[] d1;
-	Document[] d2;
+	Document offerDoc;
+	Document contactForm;
 	
-	public DocSplit(Document[] d1, Document[] d2) {
-		this.d1 = d1;
-		this.d2 = d2;
+	public DocBundle(Document offerDoc, Document contactForm) {
+		this.offerDoc = offerDoc;
+		this.contactForm = contactForm;
 	}
 	
 	
