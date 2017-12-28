@@ -1,4 +1,4 @@
-package wg_gesucht;
+package main.java.wg_gesucht;
 
 import java.util.Random;
 import java.util.regex.Pattern;

@@ -1,4 +1,4 @@
-package propertiesCreator;
+package main.java.propertiesCreator;
 
 import java.io.FileWriter;
 import java.io.IOException;

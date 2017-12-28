@@ -1,4 +1,4 @@
-package wg_gesucht;
+package main.java.wg_gesucht;
 
 import java.io.IOException; import java.util.Random;
 import org.jsoup.Connection.Response;
@@ -29,7 +29,11 @@ public class URLconnector {
 			
 			// Establish connection using stealth techniques
 			response = stealth_manager.hide(Jsoup.connect(url));
-			Document doc = response.bufferUp().parse();
+
+            // Enable multiparsing
+            response.bufferUp();
+
+			Document doc = response.parse();
 			
 			// Captcha found
 			if (doc.title().equals("Überprüfung"))

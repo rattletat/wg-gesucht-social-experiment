@@ -1,4 +1,4 @@
-package wg_gesucht;
+package main.java.wg_gesucht;
 
 import java.io.File;
 import java.io.IOException;
@@ -55,11 +55,11 @@ public class OfferFilter {
 		MessageWriter msgWriter = new MessageWriter();
 		for (DocBundle db : group1)
 		{
-			msgWriter.writeMsg(db.offerDoc, db.contactForm, 1);
+			msgWriter.writeMsg(db.getOfferDoc(), db.getContactForm(), 1);
 		}
 		for (DocBundle db : group2)
 		{
-			msgWriter.writeMsg(db.offerDoc, db.contactForm, 2);
+			msgWriter.writeMsg(db.getOfferDoc(), db.getContactForm(), 2);
 		}
 	}
 	
@@ -68,8 +68,10 @@ public class OfferFilter {
 		//check base.html
 		if (doc.title().equals("")) return false;
 		
+
 		//check availability
-		if (!doc.getElementsContainingOwnText("Kontaktaufnahme zur Zeit nicht möglich").isEmpty()) {
+		if (!doc.getElementsContainingOwnText("Kontaktaufnahme zur Zeit nicht mÃ¶glich")
+                .isEmpty()){
 			System.out.println("unavailable: "+doc.title() );
 			return false;
 		}
@@ -144,19 +146,24 @@ public class OfferFilter {
 		group1 = docsClone.subList(0, docsClone.size() / 2).toArray(new DocBundle[0]);
 		group2 = docsClone.subList(docsClone.size() / 2, docsClone.size()).toArray(new DocBundle[0]);
 	}
-
 }
-
 
 class DocBundle
 {
-	Document offerDoc;
-	Document contactForm;
+	private Document offer_doc;
+	private Document contact_form;
 	
-	public DocBundle(Document offerDoc, Document contactForm) {
-		this.offerDoc = offerDoc;
-		this.contactForm = contactForm;
+	public DocBundle(Document offer_doc, Document contact_form) {
+		this.offer_doc = offer_doc;
+		this.contact_form = contact_form;
 	}
+
+    public Document getOfferDoc() {
+        return this.offer_doc;
+    }
 	
+    public Document getContactForm() {
+        return this.contact_form;
+    }
 	
 }

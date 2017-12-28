@@ -1,15 +1,20 @@
-package wg_gesucht;
+package main.java.wg_gesucht;
 
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.Properties;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 
 public class MessageSender {
 	
 	public static final String filePathGroup1 = "./rsc/messages/group1/";
 	public static final String filePathGroup2 = "./rsc/messages/group2/";
 	
+    private static String MSG_URL = "https://www.wg-gesucht.de/nachricht-senden.html?id=";
+
 	private Properties[] personas;
 	
 	public MessageSender() throws IOException
@@ -45,5 +50,24 @@ public class MessageSender {
 		
 		//TODO connect, fill in form
 	}
+
+
+        public boolean fill_data(String url, String[] data) {
+
+        Document doc = null;
+        try {
+            doc = URLconnector.connect(url).parse();
+        } catch (Exception e) {
+            System.out.println("[ERROR] Connection could not be established.");
+        }
+        Elements forms = doc.select(".form-control");
+        Elements needed = forms.select("[name='u_anrede'], [name='vorname'], [name='nachname'], #email_input, [name='telefon'], [name='agb'], [name='kopieanmich']");
+        for (Element element : needed) {
+            System.out.println(element.toString());
+        }
+        return true;
+    }
+
+
 
 }
