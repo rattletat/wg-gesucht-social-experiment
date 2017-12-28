@@ -29,7 +29,7 @@ public class URLconnector {
 			
 			// Establish connection using stealth techniques
 			response = stealth_manager.hide(Jsoup.connect(url));
-			Document doc = response.parse();
+			Document doc = response.bufferUp().parse();
 			
 			// Captcha found
 			if (doc.title().equals("Überprüfung"))
