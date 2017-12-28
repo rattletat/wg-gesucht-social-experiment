@@ -20,9 +20,14 @@ public class MemoryManager {
         } catch (Exception e) {}
     }
 
+    /* Loads the URL List from 'URL_FILENAME' file. */
+    @SuppressWarnings("unchecked")
     public static HashMap<Integer, String> readURLs() throws Exception {
         try (ObjectInputStream is = new ObjectInputStream(new FileInputStream(URL_FILENAME))) {
             return (HashMap<Integer, String>) is.readObject();
+        } catch (Exception e) {
+            System.out.println("[WARNING] Error while reading URL list.");
+            return new HashMap<Integer, String>();
         }
     }
 

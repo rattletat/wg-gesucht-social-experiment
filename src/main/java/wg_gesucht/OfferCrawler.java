@@ -111,7 +111,7 @@ public class OfferCrawler {
 	
 	public void saveContactInFile(String url, String contactname) throws IOException, InterruptedException
 	{		
-		Document readDoc = URLconnector.connect(url);
+		Document readDoc = URLconnector.connect(url).parse();
 		Element contactDiv = readDoc.selectFirst("div[class=\"panel panel-rhs-default rhs_contact_information hidden-sm\"]");
 		Elements headlineElements = readDoc.select("h3:matchesOwn(Kosten|WG-Details)");
 		Element title = readDoc.selectFirst("title");

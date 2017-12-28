@@ -4,11 +4,7 @@ import java.util.Random;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 import org.jsoup.Connection.Response;
-import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.ArrayList;
@@ -22,11 +18,9 @@ public class CityCrawler {
 
     private HashMap<Integer, String> cities;
     private HashMap<Integer, String> city_urls;
-    private StealthManager stealth_manager;
 
     public CityCrawler() {
         this.cities = new HashMap<Integer, String>();
-        this.stealth_manager = new StealthManager();
         try {
             this.city_urls = MemoryManager.readURLs();
 
@@ -87,10 +81,10 @@ public class CityCrawler {
                 Document doc = null;
                 String redirected_url = "";
                 try {
-                    Response res = stealth_manager.hide(Jsoup.connect(url));
+                    Response res = URLconnector.connect(url);
                     redirected_url = res.url().toString();
                     doc = res.parse();
-                } catch (IOException io) {
+                } catch (Exception e) {
                     System.out.println("[ERROR] Fehler beim connecten.");
                     System.out.println(url);
                     System.exit(1);

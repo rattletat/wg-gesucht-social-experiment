@@ -46,7 +46,7 @@ public class MessageWriter {
 			}
 			
 			String url = doc.selectFirst("a[class=\"btn btn-block btn-md btn-orange\"]").attr("href");
-			Document contactForm = URLconnector.connect(url);
+			Document contactForm = URLconnector.connect(url).parse();
 			Element contactNameContainer = contactForm.getElementsContainingOwnText("Nachricht an").first();
 			if (contactNameContainer == null)
 			{
