@@ -12,18 +12,23 @@ import org.jsoup.nodes.Element;
 public class MessageWriter {
 
 	public static final String filePathMessages = "./rsc/messages/";
-	public static final String filePathPersona = "./rsc/personas/persona1.properties";
+	public static final String filePathPersona1 = "./rsc/personas/persona1.properties";
+	public static final String filePathPersona2 = "./rsc/personas/persona2.properties";
 	
 	public MessageWriter(DocSplit ds) throws InterruptedException, IOException {
 		
 		//read persona
-		FileReader reader = new FileReader(filePathPersona);
-		Properties personaProps = new Properties();
-		personaProps.load(reader);
+		FileReader reader = new FileReader(filePathPersona1);
+		Properties personaProps1 = new Properties();
+		personaProps1.load(reader);
+		reader = new FileReader(filePathPersona2);
+		Properties personaProps2 = new Properties();
+		personaProps2.load(reader);
 		
-		writeMsgs(ds.d1, personaProps);
+		writeMsgs(ds.d1, personaProps1);
 		System.out.println();
-		writeMsgs(ds.d2, personaProps);
+		writeMsgs(ds.d2, personaProps2);
+		reader.close();
 	}
 	
 	public void writeMsgs(Document[] docs, Properties personaProps) throws InterruptedException, IOException
