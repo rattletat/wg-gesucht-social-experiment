@@ -11,6 +11,8 @@ public class personaCreator {
 	public final static int age = 25;
 	public final static char gender = 'm';
 	public final static String textInformal = "ich bin Max und blablabla...";
+	public final static String forename = "Max";
+	public final static String surname = "Mustermann";
 	public final static String textFormal = "mein Name ist Max Mustermann und blub...";
 	
 	public static void main(String[] args) throws IOException {
@@ -20,6 +22,8 @@ public class personaCreator {
 		props.setProperty("gender", gender+"");
 		props.setProperty("textInformal", textInformal);
 		props.setProperty("textFormal", textFormal);
+		props.setProperty("surname", surname);
+		props.setProperty("forename", forename);
 		
 		FileWriter writer = new FileWriter(filePath);
 		props.store(writer, "");

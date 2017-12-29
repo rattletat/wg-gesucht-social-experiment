@@ -1,6 +1,8 @@
 package main.java.wg_gesucht;
 
 import java.io.IOException; import java.util.Random;
+
+import org.jsoup.Connection;
 import org.jsoup.Connection.Response;
 
 import org.jsoup.Jsoup;
@@ -28,7 +30,9 @@ public class URLconnector {
 			Thread.sleep(min_waiting_sec*1000 + (int)(percentage*1000*variance));
 			
 			// Establish connection using stealth techniques
-			response = stealth_manager.hide(Jsoup.connect(url));
+            Connection connection = Jsoup.connect(url)
+                .method(Connection.Method.GET);
+			response = stealth_manager.hide(connection);
 
             // Enable multiparsing
             response.bufferUp();

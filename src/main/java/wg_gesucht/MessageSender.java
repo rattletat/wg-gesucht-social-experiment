@@ -4,9 +4,12 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.Properties;
+
+import org.jsoup.Connection.Response;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.jsoup.nodes.FormElement;
 
 public class MessageSender {
 
@@ -37,7 +40,8 @@ public class MessageSender {
         }
     }
 
-    public void sendMessage(File dir, Properties persona) throws IOException {
+
+    public boolean sendMessage(File dir, Properties persona) throws IOException {
         // Load persona data
         String properties_path = dir.getAbsolutePath()
                                  + dir.getName() + ".properties";
@@ -49,19 +53,64 @@ public class MessageSender {
             throw io;
         }
 
-        // Extract form elements (TODO)
+        // Extract form elements
+        String url = msg_probs.getProperty("url");
         Document doc = null;
+        Response response = null;
         try {
-            doc = URLconnector.connect(url).parse();
+            response = URLconnector.connect(url);
+            doc = response.parse();
         } catch (Exception e) {
             System.out.println("[ERROR] Connection could not be established.");
+            return false;
         }
-        Elements forms = doc.select(".form-control");
-        Elements needed = forms.select("[name='u_anrede'], [name='vorname'], [name='nachname'], #email_input, [name='telefon'], [name='agb'], [name='kopieanmich']");
-        for (Element element : needed) {
-            System.out.println(element.toString());
+
+        FormElement form = (FormElement) doc.selectFirst("#panel panel-form");
+        Element salutation_form = doc.selectFirst("[name='u_anrede']");
+        Element surname_form = doc.selectFirst("[name='nachname']");
+        Element forename_form = doc.selectFirst("[name='vorname']");
+        Element email_form = doc.selectFirst("#email_input");
+        Element msg_form = doc.selectFirst("#nachricht-text");
+        Element agb_form = doc.selectFirst("#agb");
+        Element copy_form = doc.selectFirst("#kopieanmich");
+
+        if (form == null || salutation_form == null || forename_form == null
+                || surname_form == null || email_form == null || msg_form == null
+                || agb_form == null || copy_form == null) {
+            System.out.println("[WARNING] Could not find send form.");
         }
-        return true;
+
+        // Fill form elements
+        char gender = persona.getProperty("gender").charAt(0);
+        if (gender == 'm') ; // TODO
+        else ;
+
+        String forename = persona.getProperty("forename");
+        forename_form.val(forename);
+
+        String surname = persona.getProperty("surname");
+        surname_form.val(surname);
+
+        String email = persona.getProperty("email");
+        email_form.val(email);
+
+        String msg = persona.getProperty("msg");
+        msg_form.val(msg);
+
+        agb_form.attr("checked");
+
+        copy_form.attr("checked");
+
+        Document result = form.submit().cookies(response.cookies()).post();
+        String title = result.title();
+        if (title.equals("Vielen Dank. Ihre Nachricht wurde gesendet.")) {
+            String stakeholder = msg_probs.getProperty("fullname");
+            System.out.println("[INFO] Message sent: " + stakeholder);
+            return true;
+        } else {
+            System.out.println("[WARNING] Send process failed.");
+            return false;
+        }
     }
 
 

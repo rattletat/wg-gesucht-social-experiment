@@ -64,7 +64,6 @@ public class CrawlerLauncher {
         // Write appropiate messages
         if (startMessageWriter && of != null) {
             System.out.println("[MODULE] MessageWriter activated.");
-            System.out.println();
             of.writeMsgs();
             System.out.println("[MODULE] MessageWriter deactivated.");
         }
