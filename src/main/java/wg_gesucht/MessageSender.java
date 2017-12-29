@@ -9,50 +9,47 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 public class MessageSender {
-	
-	public static final String filePathGroup1 = "./rsc/messages/group1/";
-	public static final String filePathGroup2 = "./rsc/messages/group2/";
-	
+
+    public static final String filePathGroup1 = "./rsc/messages/group1/";
+    public static final String filePathGroup2 = "./rsc/messages/group2/";
+
     private static String MSG_URL = "https://www.wg-gesucht.de/nachricht-senden.html?id=";
 
-	private Properties[] personas;
-	
-	public MessageSender() throws IOException
-	{
-		personas = new Properties[2];
-		// read persona
-		FileReader reader = new FileReader(MessageWriter.filePathPersona1);
-		personas[0] = new Properties();
-		personas[0].load(reader);
-		reader = new FileReader(MessageWriter.filePathPersona2);
-		personas[1] = new Properties();
-		personas[1].load(reader);
-		reader.close();
-		
-		String filePath = filePathGroup1;
-		for (int i = 0; i<2; i++)
-		{	
-			File dirGroup = new File(filePath);
-			for (File dir : dirGroup.listFiles())
-			{
-				sendMessage(dir, personas[i]);
-			}
-		}
-	}
-	
-	public void sendMessage(File dir, Properties persona) throws IOException
-	{
-		String propertiesPath = dir.getAbsolutePath() + dir.getName() + ".properties";
-		Properties msgProps = new Properties();
-		FileReader reader = new FileReader(propertiesPath);
-		msgProps.load(reader);
-		reader.close();
-		
-		//TODO connect, fill in form
-	}
+    private Properties[] personas;
 
+    public MessageSender() throws IOException {
+        personas = new Properties[2];
+        // read persona
+        FileReader reader = new FileReader(MessageWriter.filePathPersona1);
+        personas[0] = new Properties();
+        personas[0].load(reader);
+        reader = new FileReader(MessageWriter.filePathPersona2);
+        personas[1] = new Properties();
+        personas[1].load(reader);
+        reader.close();
 
+        String filePath = filePathGroup1;
+        for (int i = 0; i < 2; i++) {
+            File dirGroup = new File(filePath);
+            for (File dir : dirGroup.listFiles()) {
+                sendMessage(dir, personas[i]);
+            }
+        }
+    }
 
+    public void sendMessage(File dir, Properties persona) throws IOException {
+        // Load persona data
+        String properties_path = dir.getAbsolutePath()
+                                 + dir.getName() + ".properties";
+        Properties msg_probs = new Properties();
+
+        try(FileReader reader = new FileReader(properties_path)) {
+            msg_probs.load(reader);
+        } catch (IOException io) {
+            throw io;
+        }
+
+        // Extract form elements (TODO)
         Document doc = null;
         try {
             doc = URLconnector.connect(url).parse();
