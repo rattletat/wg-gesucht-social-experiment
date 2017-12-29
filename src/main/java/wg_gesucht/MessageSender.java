@@ -42,7 +42,7 @@ public class MessageSender {
 	
 	public void sendMessage(File dir, Properties persona) throws IOException
 	{
-		String propertiesPath = dir.getAbsolutePath() + dir.getName() + ".porperties";
+		String propertiesPath = dir.getAbsolutePath() + dir.getName() + ".properties";
 		Properties msgProps = new Properties();
 		FileReader reader = new FileReader(propertiesPath);
 		msgProps.load(reader);
@@ -52,7 +52,6 @@ public class MessageSender {
 	}
 
 
-        public boolean fill_data(String url, String[] data) {
 
         Document doc = null;
         try {
