@@ -78,12 +78,13 @@ public class MessageSender {
                 || surname_form == null || email_form == null || msg_form == null
                 || agb_form == null || copy_form == null) {
             System.out.println("[WARNING] Could not find send form.");
+            System.exit(1); // click button needed
         }
 
         // Fill form elements
         char gender = persona.getProperty("gender").charAt(0);
-        if (gender == 'm') ; // TODO
-        else ;
+        if (gender == 'm') salutation_form.val("Herr");
+        else salutation_form.val("Frau");
 
         String forename = persona.getProperty("forename");
         forename_form.val(forename);
@@ -109,6 +110,7 @@ public class MessageSender {
             return true;
         } else {
             System.out.println("[WARNING] Send process failed.");
+            System.out.println("Title: " + title);
             return false;
         }
     }
