@@ -3,6 +3,7 @@ package main.java.wg_gesucht;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.Map;
 import java.util.Properties;
 
 import org.jsoup.Connection.Response;
@@ -20,25 +21,25 @@ public class MessageSender {
 
     private Properties[] personas;
 
-    public MessageSender() throws IOException {
-        personas = new Properties[2];
-        // read persona
-        FileReader reader = new FileReader(MessageWriter.filePathPersona1);
-        personas[0] = new Properties();
-        personas[0].load(reader);
-        reader = new FileReader(MessageWriter.filePathPersona2);
-        personas[1] = new Properties();
-        personas[1].load(reader);
-        reader.close();
-
-        String filePath = filePathGroup1;
-        for (int i = 0; i < 2; i++) {
-            File dirGroup = new File(filePath);
-            for (File dir : dirGroup.listFiles()) {
-                sendMessage(dir, personas[i]);
-            }
-        }
-    }
+    // public MessageSender() throws IOException {
+    //     personas = new Properties[2];
+    //     // read persona
+    //     FileReader reader = new FileReader(MessageWriter.filePathPersona1);
+    //     personas[0] = new Properties();
+    //     personas[0].load(reader);
+    //     reader = new FileReader(MessageWriter.filePathPersona2);
+    //     personas[1] = new Properties();
+    //     personas[1].load(reader);
+    //     reader.close();
+    //
+    //     String filePath = filePathGroup1;
+    //     for (int i = 0; i < 2; i++) {
+    //         File dirGroup = new File(filePath);
+    //         for (File dir : dirGroup.listFiles()) {
+    //             sendMessage(dir, personas[i]);
+    //         }
+    //     }
+    // }
 
 
     public boolean sendMessage(File dir, Properties persona) throws IOException {
@@ -65,7 +66,7 @@ public class MessageSender {
             return false;
         }
 
-        FormElement form = (FormElement) doc.selectFirst("#panel panel-form");
+        FormElement form = (FormElement) doc.selectFirst("#send_message_form");
         Element salutation_form = doc.selectFirst("[name='u_anrede']");
         Element surname_form = doc.selectFirst("[name='nachname']");
         Element forename_form = doc.selectFirst("[name='vorname']");
@@ -78,13 +79,20 @@ public class MessageSender {
                 || surname_form == null || email_form == null || msg_form == null
                 || agb_form == null || copy_form == null) {
             System.out.println("[WARNING] Could not find send form.");
-            System.exit(1); // click button needed
+            MemoryManager.saveDocument(doc);
+            System.out.println((form == null)); // TODO: Retry bei Fehler
+            System.exit(1); 
         }
 
         // Fill form elements
         char gender = persona.getProperty("gender").charAt(0);
-        if (gender == 'm') salutation_form.val("Herr");
-        else salutation_form.val("Frau");
+        Elements options = salutation_form.getElementsByTag("option");
+        for(Element opt: options){
+            System.out.println(opt.attributes());
+            if(opt.attr("value").equals("1") && gender == 'm') opt.attr("selected", "");
+            if(opt.attr("value").equals("2") && gender == 'f') opt.attr("selected", "");
+        }
+
 
         String forename = persona.getProperty("forename");
         forename_form.val(forename);
@@ -98,9 +106,10 @@ public class MessageSender {
         String msg = persona.getProperty("msg");
         msg_form.val(msg);
 
-        agb_form.attr("checked");
+        agb_form.attr("checked", true);
 
-        copy_form.attr("checked");
+        copy_form.attr("checked", true);
+
 
         Document result = form.submit().cookies(response.cookies()).post();
         String title = result.title();
@@ -111,10 +120,8 @@ public class MessageSender {
         } else {
             System.out.println("[WARNING] Send process failed.");
             System.out.println("Title: " + title);
+            MemoryManager.saveDocument(doc);
             return false;
         }
     }
-
-
-
 }

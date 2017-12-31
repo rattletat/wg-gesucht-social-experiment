@@ -1,6 +1,7 @@
 package main.java.wg_gesucht;
 
 import java.util.HashMap;
+import java.util.Map;
 import java.io.FileReader;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -23,9 +24,11 @@ public class StealthManager {
     public Response hide(Connection connection) throws IOException {
         String random_agent = getRandomUserAgent();
         HashMap<String, String> cookies_memory = getUserCookies(random_agent);
+        cookies_memory.putIfAbsent("sec_advice", "sec_advice");
         connection.cookies(cookies_memory);
         connection.userAgent(random_agent);
         connection.timeout(10000);
+        
         Response response = connection.execute();
         this.cookie_database.get(random_agent).putAll(response.cookies());
         return response;
