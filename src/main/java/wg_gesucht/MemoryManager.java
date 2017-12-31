@@ -7,7 +7,10 @@ import java.io.FileInputStream;
 import java.io.ObjectOutputStream;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
+import java.util.Date;
 import java.util.HashMap;
+
+import org.jsoup.nodes.Document;
 
 public class MemoryManager {
 
@@ -49,4 +52,18 @@ public class MemoryManager {
         return true;
     }
 
+    public static boolean saveDocument(Document doc) {
+        String base_path = System.getProperty("user.dir");
+
+        String path = base_path + "/rsc/debug/" + new Date().toString() + ".html";
+
+        File text_file = new File(path);
+
+        try(FileWriter file_writer = new FileWriter(text_file)) {
+            file_writer.write(doc.html());
+        } catch (IOException ioe) {
+            return false;
+        }
+        return true;
+    }
 }
