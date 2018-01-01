@@ -1,7 +1,6 @@
 package main.java.wg_gesucht;
 
 import java.util.HashMap;
-import java.util.Map;
 import java.io.FileReader;
 import java.io.BufferedReader;
 import java.io.IOException;

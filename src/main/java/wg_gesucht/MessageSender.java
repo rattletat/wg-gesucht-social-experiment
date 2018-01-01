@@ -3,7 +3,7 @@ package main.java.wg_gesucht;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.Map;
+import java.util.Scanner;
 import java.util.Properties;
 
 import org.jsoup.Connection.Response;
@@ -16,10 +16,6 @@ public class MessageSender {
 
     public static final String filePathGroup1 = "./rsc/messages/group1/";
     public static final String filePathGroup2 = "./rsc/messages/group2/";
-
-    private static String MSG_URL = "https://www.wg-gesucht.de/nachricht-senden.html?id=";
-
-    private Properties[] personas;
 
     // public MessageSender() throws IOException {
     //     personas = new Properties[2];
@@ -42,7 +38,7 @@ public class MessageSender {
     // }
 
 
-    public boolean sendMessage(File dir, Properties persona) throws IOException {
+    public boolean sendMessage(File dir, Properties persona) {
         // Load persona data
         String properties_path = dir.getAbsolutePath()
                                  + dir.getName() + ".properties";
@@ -51,7 +47,8 @@ public class MessageSender {
         try(FileReader reader = new FileReader(properties_path)) {
             msg_probs.load(reader);
         } catch (IOException io) {
-            throw io;
+            System.out.println("[ERROR] Loading offer data from memory failed.");
+            return false;
         }
 
         // Extract form elements
@@ -63,7 +60,7 @@ public class MessageSender {
             doc = response.parse();
         } catch (Exception e) {
             System.out.println("[ERROR] Connection could not be established.");
-            return false;
+            return prompt(dir, persona);
         }
 
         FormElement form = (FormElement) doc.selectFirst("#send_message_form");
@@ -81,16 +78,16 @@ public class MessageSender {
             System.out.println("[WARNING] Could not find send form.");
             MemoryManager.saveDocument(doc);
             System.out.println((form == null)); // TODO: Retry bei Fehler
-            System.exit(1); 
+            System.exit(1);
         }
 
         // Fill form elements
         char gender = persona.getProperty("gender").charAt(0);
         Elements options = salutation_form.getElementsByTag("option");
-        for(Element opt: options){
+        for (Element opt : options) {
             System.out.println(opt.attributes());
-            if(opt.attr("value").equals("1") && gender == 'm') opt.attr("selected", "");
-            if(opt.attr("value").equals("2") && gender == 'f') opt.attr("selected", "");
+            if (opt.attr("value").equals("1") && gender == 'm') opt.attr("selected", "");
+            if (opt.attr("value").equals("2") && gender == 'f') opt.attr("selected", "");
         }
 
 
@@ -111,9 +108,16 @@ public class MessageSender {
         copy_form.attr("checked", true);
 
 
-        Document result = form.submit().cookies(response.cookies()).post();
-        String title = result.title();
-        if (title.equals("Vielen Dank. Ihre Nachricht wurde gesendet.")) {
+        Document result;
+        String title;
+        try {
+            result = form.submit().cookies(response.cookies()).post();
+            title = result.title();
+        } catch (Exception e) {
+            System.out.println("[ERROR] Submitting form failed.");
+            return prompt(dir, persona);
+        }
+        if (title != null && title.equals("Vielen Dank. Ihre Nachricht wurde gesendet.")) {
             String stakeholder = msg_probs.getProperty("fullname");
             System.out.println("[INFO] Message sent: " + stakeholder);
             return true;
@@ -121,7 +125,23 @@ public class MessageSender {
             System.out.println("[WARNING] Send process failed.");
             System.out.println("Title: " + title);
             MemoryManager.saveDocument(doc);
-            return false;
+            System.out.println("[INFO] HTML saved under 'rsc/debug' for debugging.");
+            return prompt(dir, persona);
+        }
+    }
+
+    private boolean prompt(File dir, Properties persona) {
+        while (true) {
+            System.out.println("[PROMPT] Retry? (y/n)");
+            Scanner reader = new Scanner(System.in);
+            String input = reader.next();
+            reader.close();
+            if (input != null && input.length() == 1) {
+                char c = input.charAt(0);
+                if (c == 'n') return false;
+                if (c == 'y') return sendMessage(dir, persona);
+                else System.out.println("[PROMPT] Invalid input: '" + c + "'");
+            }
         }
     }
 }
