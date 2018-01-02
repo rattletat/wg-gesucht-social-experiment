@@ -17,28 +17,62 @@ public class MessageSender {
     public static final String filePathGroup1 = "./rsc/messages/group1/";
     public static final String filePathGroup2 = "./rsc/messages/group2/";
 
-    // public MessageSender() throws IOException {
-    //     personas = new Properties[2];
-    //     // read persona
-    //     FileReader reader = new FileReader(MessageWriter.filePathPersona1);
-    //     personas[0] = new Properties();
-    //     personas[0].load(reader);
-    //     reader = new FileReader(MessageWriter.filePathPersona2);
-    //     personas[1] = new Properties();
-    //     personas[1].load(reader);
-    //     reader.close();
-    //
-    //     String filePath = filePathGroup1;
-    //     for (int i = 0; i < 2; i++) {
-    //         File dirGroup = new File(filePath);
-    //         for (File dir : dirGroup.listFiles()) {
-    //             sendMessage(dir, personas[i]);
-    //         }
-    //     }
-    // }
+    public static void startSending() {
+        // Load personas into RAM
+        Properties persona1;
+        Properties persona2;
+        FileReader reader;
+        try {
+            reader = new FileReader(MessageWriter.filePathPersona1);
+            persona1 = new Properties();
+            persona1.load(reader);
 
+            reader = new FileReader(MessageWriter.filePathPersona2);
+            persona2 = new Properties();
+            persona2.load(reader);
 
-    public boolean sendMessage(File dir, Properties persona) {
+            reader.close();
+        } catch (Exception e) {
+            System.out.println("[ERROR] Failed loading personas.");
+            return;
+        }
+
+        // Load messages into RAM
+        File[] prop_files1;
+        File[] prop_files2;
+        try {
+            File group_dir1 = new File(filePathGroup1);
+            File group_dir2 = new File(filePathGroup2);
+
+            prop_files1 = group_dir1.listFiles();
+            prop_files2 = group_dir2.listFiles();
+        } catch (Exception e) {
+            System.out.println("[ERROR] Loading property files failed.");
+            return;
+        }
+
+        // Send messages for both groups
+        int counter1 = 0;
+        int counter2 = 0;
+        try {
+            for (File file : prop_files1) {
+                boolean result = sendMessage(file, persona1);
+                if (result) counter1++;
+            }
+            for (File file : prop_files2) {
+                boolean result = sendMessage(file, persona2);
+                if (result) counter2++;
+            }
+
+        } catch (Exception e) {
+            System.out.println("[ERROR] Sending messages failed.");
+        }
+            System.out.println("[Group1] Messages sent so far: " + counter1 + "/" + prop_files1.length);
+            System.out.println("[Group2] Messages sent so far: " + counter2 + "/" + prop_files2.length);
+            return;
+    }
+
+    public static boolean sendMessage(File dir, Properties persona) {
         // Load persona data
         String properties_path = dir.getAbsolutePath()
                                  + dir.getName() + ".properties";
@@ -130,7 +164,7 @@ public class MessageSender {
         }
     }
 
-    private boolean prompt(File dir, Properties persona) {
+    private static boolean prompt(File dir, Properties persona) {
         while (true) {
             System.out.println("[PROMPT] Retry? (y/n)");
             Scanner reader = new Scanner(System.in);
