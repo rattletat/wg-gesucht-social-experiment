@@ -2,12 +2,7 @@
 ## Racism in the housing market
 
 **To do's:**
-- WG-gesucht:
-  - Scraping cities ID
-  - Getting to the send-request site
-- Analyse email responses
-- Make fancy visualization
-
+See issues.
 
 **URL Manipulation**
 Example: *https://www.wg-gesucht.de/wohnungen-in-Bielefeld.10.2.1.3.html*
