@@ -17,6 +17,11 @@ public class MessageSender {
     public static final String filePathGroup1 = "./rsc/messages/group1/";
     public static final String filePathGroup2 = "./rsc/messages/group2/";
 
+    /**
+     * Initiate send process for each stakeholder group,
+     * by loading the files and iteratively calling 'sendMessage()'.
+     * @see #sendMessage(File, Properties)
+     */
     public static void startSending() {
         // Load personas into RAM
         Properties persona1;
@@ -67,11 +72,19 @@ public class MessageSender {
         } catch (Exception e) {
             System.out.println("[ERROR] Sending messages failed.");
         }
-            System.out.println("[Group1] Messages sent so far: " + counter1 + "/" + prop_files1.length);
-            System.out.println("[Group2] Messages sent so far: " + counter2 + "/" + prop_files2.length);
-            return;
+        System.out.println("[Group1] Messages sent so far: " + counter1 + "/" + prop_files1.length);
+        System.out.println("[Group2] Messages sent so far: " + counter2 + "/" + prop_files2.length);
+        return;
     }
 
+
+    /**
+     * Fills the form and sends it. In the case of a connection error,
+     * it prompts the user whether to try again.
+     * @param dir file that contains stakeholder information
+     * @param persona profile properties which should be used for filling out the form
+     * @see #prompt(File, Properties)
+     */
     public static boolean sendMessage(File dir, Properties persona) {
         // Load persona data
         String properties_path = dir.getAbsolutePath()
@@ -124,7 +137,6 @@ public class MessageSender {
             if (opt.attr("value").equals("2") && gender == 'f') opt.attr("selected", "");
         }
 
-
         String forename = persona.getProperty("forename");
         forename_form.val(forename);
 
@@ -141,7 +153,7 @@ public class MessageSender {
 
         copy_form.attr("checked", true);
 
-
+        // Send form
         Document result;
         String title;
         try {
@@ -164,6 +176,14 @@ public class MessageSender {
         }
     }
 
+
+    /**
+     * Prompts the user wheter to retry the sending process.
+     * If so, it calls 'sendMessage()' again, otherwise it returns false.
+     * @param dir a file of stakeholder information
+     * @param persona profile properties to use
+     * @see #sendMessage(File, Properties)
+     */
     private static boolean prompt(File dir, Properties persona) {
         while (true) {
             System.out.println("[PROMPT] Retry? (y/n)");
