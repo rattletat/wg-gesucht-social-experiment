@@ -28,7 +28,7 @@ public class personaCreator {
     // Setup email provider
     // Existing emails >need< to have the following format:
     // forename.surname.cityID.{1,2}@email_provder
-    public final static String email_provider = "gmail.com";
+    public final static String email_provider = "fastmail.de";
 
     public static void main(String[] args) throws IOException {
 

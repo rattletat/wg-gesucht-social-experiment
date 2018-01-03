@@ -134,7 +134,7 @@ public class MessageSender {
 
         String city_id = msg_props.getProperty("city_id");
         String email_provider = msg_props.getProperty("email_provider");
-        String email = forename + "." + surname + "." + city_id + "."
+        String email = forename + "_" + surname + "_" + city_id + "_"
                        + group_id + "@" + email_provider;
         email_form.val(email);
 
