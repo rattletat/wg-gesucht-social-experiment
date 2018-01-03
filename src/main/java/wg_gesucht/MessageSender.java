@@ -14,6 +14,8 @@ import org.jsoup.nodes.FormElement;
 
 public class MessageSender {
 
+    private static final boolean test_mode = true;
+
     private static final String filePathGroup1 = "./rsc/messages/group1/";
     private static final String filePathGroup2 = "./rsc/messages/group2/";
 
@@ -151,6 +153,18 @@ public class MessageSender {
         agb_form.attr("checked", true);
 
         copy_form.attr("checked", true);
+
+        if(test_mode){
+            System.out.println();
+            String stakeholder = msg_props.getProperty("full_name");
+            System.out.println("[TESTMODE] Message for: " + stakeholder);
+            System.out.println("Group: " + group_id + " City: " + city_id);
+            System.out.println("Name used: " + forename + " " + surname);
+            System.out.println("Gender used: " + gender);
+            System.out.println("Email used: " + email);
+            System.out.println(msg);
+            return false;
+        }
 
         // Send form
         Document result;
