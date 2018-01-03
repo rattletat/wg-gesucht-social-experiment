@@ -113,9 +113,9 @@ public class MessageWriter {
         Properties msg_props = new Properties();
         msg_props.setProperty("url", contact_url);
         if (informal)
-            msg_props.setProperty("msg", salutation + persona.getProperty("text_informal"));
+            msg_props.setProperty("msg", salutation + persona.getProperty("text_informal" + group_nr));
         else
-            msg_props.setProperty("msg", salutation + persona.getProperty("text_formal"));
+            msg_props.setProperty("msg", salutation + persona.getProperty("text_formal" + group_nr));
 
         // Full name property
         String full_name = String.join(" ", name_components);

@@ -50,14 +50,17 @@ public class MessageSender {
             for (File file : prop_files1) {
                 boolean result = sendMessage(file, persona);
                 if (result) counter1++;
+                Thread.sleep(10000);
             }
             for (File file : prop_files2) {
                 boolean result = sendMessage(file, persona);
                 if (result) counter2++;
+                Thread.sleep(10000);
             }
 
         } catch (Exception e) {
             System.err.println("[ERROR] Sending messages failed.");
+            e.printStackTrace();
         }
         System.out.println("[Group1] Messages sent so far: " + counter1 + "/" + prop_files1.length);
         System.out.println("[Group2] Messages sent so far: " + counter2 + "/" + prop_files2.length);
@@ -74,14 +77,14 @@ public class MessageSender {
      */
     private static boolean sendMessage(File dir, Properties persona) {
         // Load persona data
-        String properties_path = dir.getAbsolutePath()
-                                 + dir.getName() + ".properties";
+        String properties_path = dir.getAbsolutePath() + "/" + dir.getName() + ".properties";
         Properties msg_props = new Properties();
 
         try(FileReader reader = new FileReader(properties_path)) {
             msg_props.load(reader);
         } catch (IOException io) {
             System.out.println("[ERROR] Loading offer data from memory failed.");
+            System.out.println(properties_path);
             return false;
         }
 
@@ -119,12 +122,11 @@ public class MessageSender {
         char gender = persona.getProperty("gender").charAt(0);
         Elements options = salutation_form.getElementsByTag("option");
         for (Element opt : options) {
-            System.out.println(opt.attributes());
             if (opt.attr("value").equals("1") && gender == 'm') opt.attr("selected", "");
             if (opt.attr("value").equals("2") && gender == 'f') opt.attr("selected", "");
         }
 
-        String group_id = msg_props.getProperty("group_id");
+        String group_id = msg_props.getProperty("group");
 
         String forename = persona.getProperty("forename" + group_id);
         forename_form.val(forename);
@@ -133,12 +135,12 @@ public class MessageSender {
         surname_form.val(surname);
 
         String city_id = msg_props.getProperty("city_id");
-        String email_provider = msg_props.getProperty("email_provider");
-        String email = forename + "_" + surname + "_" + city_id + "_"
-                       + group_id + "@" + email_provider;
+        String email_provider = persona.getProperty("email_provider");
+        String email = forename.toLowerCase() + "." + surname.toLowerCase()
+                       + "." + city_id + "@" + email_provider;
         email_form.val(email);
 
-        String msg = persona.getProperty("msg");
+        String msg = msg_props.getProperty("msg");
         msg_form.val(msg);
 
         agb_form.attr("checked", true);
@@ -156,8 +158,9 @@ public class MessageSender {
             return prompt(dir, persona);
         }
         if (title != null && title.equals("Vielen Dank. Ihre Nachricht wurde gesendet.")) {
-            String stakeholder = msg_props.getProperty("fullname");
+            String stakeholder = msg_props.getProperty("full_name");
             System.out.println("[INFO] Message sent: " + stakeholder);
+            System.out.println(msg);
             return true;
         } else {
             System.out.println("[WARNING] Send process failed.");
@@ -182,7 +185,7 @@ public class MessageSender {
             Scanner reader = new Scanner(System.in);
             String input = reader.next();
             reader.close();
-            if (input != null && input.length() == 1) {
+            if (input != null) {
                 char c = input.charAt(0);
                 if (c == 'n') return false;
                 if (c == 'y') return sendMessage(dir, persona);

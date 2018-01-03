@@ -118,7 +118,7 @@ public class OfferFilter {
             return false;
         } else {
             filtered_docs.add(new DocBundle(doc, contact_form, city_id));
-            System.out.println("ADDED");
+            System.out.println("[INFO] Successfully added offer.");
         }
 
         return true;

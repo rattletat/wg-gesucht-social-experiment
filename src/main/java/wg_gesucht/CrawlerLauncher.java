@@ -6,17 +6,26 @@ import java.util.Properties;
 
 public class CrawlerLauncher {
 
-    final static boolean START_CITY_CRAWLER = true;
-    final static boolean START_OFFER_CRAWLER = true;
-    final static boolean START_OFFER_FILTER = true;
-    final static boolean START_MESSAGE_WRITER = true;
-    final static boolean START_MESSAGE_SENDER = false;
+    final static boolean REFRESH_PERSONA = true;
+    final static boolean START_CITY_CRAWLER = false;
+    final static boolean START_OFFER_CRAWLER = false;
+    final static boolean START_OFFER_FILTER = false;
+    final static boolean START_MESSAGE_WRITER = false;
+    final static boolean START_MESSAGE_SENDER = true;
 
     public static void main(String[] args) {
         // Setup cities
         ArrayList<Integer> cities = new ArrayList<Integer>();
-        cities.add(1);
-        cities.add(2); //...
+        cities.add(2);
+
+        // Refresh persona
+        try{
+        if (REFRESH_PERSONA)
+            PersonaCreator.refreshPersona();
+        } catch(Exception e){
+            System.err.println("[ERROR] Refreshing persona failed.");
+            System.exit(1);
+        }
 
         // Setup persona path
         String persona_path = "./rsc/personas/persona1.properties";
