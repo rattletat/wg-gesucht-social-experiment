@@ -34,8 +34,8 @@ public class MessageWriter {
 
 
     private void writeMsg(
-        Document offerDoc,
-        Document contactForm,
+        Document offer_doc,
+        Document contact_form,
         int group_nr,
         int city_id
     ) {
@@ -47,7 +47,7 @@ public class MessageWriter {
         String folder_name = "group" + group_nr;
 
         char contactGender;
-        String bgImgStyle = offerDoc.selectFirst("div[class=\"profile_image_dav\"]").attr("style");
+        String bgImgStyle = offer_doc.selectFirst("div[class=\"profile_image_dav\"]").attr("style");
         if (bgImgStyle.contains("/female.png")) {
             contactGender = 'f';
         } else if (bgImgStyle.contains("/male.png")) {
@@ -56,9 +56,9 @@ public class MessageWriter {
             contactGender = 'n';
         }
 
-        String contact_url = offerDoc.selectFirst("a[class=\"btn btn-block btn-md btn-orange\"]").attr("href");
+        String contact_url = offer_doc.selectFirst("a[class=\"btn btn-block btn-md btn-orange\"]").attr("href");
 
-        Element contactNameContainer = contactForm.getElementsContainingOwnText("Nachricht an").first();
+        Element contactNameContainer = contact_form.getElementsContainingOwnText("Nachricht an").first();
         String[] contactNameTextSplit = contactNameContainer.text().split(" ");
 
         StringBuilder sb = new StringBuilder();
@@ -133,7 +133,7 @@ public class MessageWriter {
         try {
             msg_props.store(new FileWriter(folder_to_save + contact_name + ".properties"), "");
             FileWriter file_writer = new FileWriter(folder_to_save + contact_name + ".html");
-            file_writer.write(contactForm.outerHtml());
+            file_writer.write(contact_form.outerHtml());
             file_writer.close();
             System.out.println("[INFO] Successfully written message: " + contact_name);
         } catch (Exception e) {

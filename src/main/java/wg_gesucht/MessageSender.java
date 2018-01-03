@@ -124,14 +124,15 @@ public class MessageSender {
             if (opt.attr("value").equals("2") && gender == 'f') opt.attr("selected", "");
         }
 
-        String forename = persona.getProperty("forename");
+        String group_id = msg_props.getProperty("group_id");
+
+        String forename = persona.getProperty("forename" + group_id);
         forename_form.val(forename);
 
-        String surname = persona.getProperty("surname");
+        String surname = persona.getProperty("surname" + group_id);
         surname_form.val(surname);
 
         String city_id = msg_props.getProperty("city_id");
-        String group_id = msg_props.getProperty("group_id");
         String email_provider = msg_props.getProperty("email_provider");
         String email = forename + "." + surname + "." + city_id + "."
                        + group_id + "@" + email_provider;
