@@ -43,6 +43,11 @@ public class MessageSender {
             return;
         }
 
+        if (prop_files1 == null || prop_files1.length == 0
+                || prop_files2 == null || prop_files2.length == 0) {
+            System.out.println("[WARNING] No messages to send. Aborting.");
+            return;
+        }
         // Send messages for both groups
         int counter1 = 0;
         int counter2 = 0;

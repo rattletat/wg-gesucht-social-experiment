@@ -7,24 +7,28 @@ import java.util.Properties;
 public class CrawlerLauncher {
 
     final static boolean REFRESH_PERSONA = true;
-    final static boolean START_CITY_CRAWLER = false;
-    final static boolean START_OFFER_CRAWLER = false;
-    final static boolean START_OFFER_FILTER = false;
-    final static boolean START_MESSAGE_WRITER = false;
+    final static boolean START_CITY_CRAWLER = true;
+    final static boolean START_OFFER_CRAWLER = true;
+    final static boolean START_OFFER_FILTER = true;
+    final static boolean START_MESSAGE_WRITER = true;
     final static boolean START_MESSAGE_SENDER = true;
 
     public static void main(String[] args) {
         // Setup cities
         ArrayList<Integer> cities = new ArrayList<Integer>();
-        cities.add(2);
+        cities.add(1);
 
         // Refresh persona
-        try{
-        if (REFRESH_PERSONA)
-            PersonaCreator.refreshPersona();
-        } catch(Exception e){
-            System.err.println("[ERROR] Refreshing persona failed.");
-            System.exit(1);
+        if (REFRESH_PERSONA) {
+            System.out.println("[MODULE] PersonaCreator activated.");
+            try {
+                PersonaCreator.refreshPersona();
+                System.out.println("[INFO] Successfully loaded persona.");
+            } catch (Exception e) {
+                System.err.println("[ERROR] Refreshing persona failed.");
+                System.exit(1);
+            }
+            System.out.println("[MODULE] PersonaCreator deactivated.");
         }
 
         // Setup persona path

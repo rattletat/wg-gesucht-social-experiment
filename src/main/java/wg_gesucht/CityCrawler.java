@@ -13,7 +13,7 @@ import java.util.Arrays;
 public class CityCrawler {
 
     private final static int delay = 10;
-    private final static int max_pages = 2;
+    private final static int max_pages = 1;
     private final static int max_cities = 144; // Last City on wg-gesucht 'Zwickau' with id 144
 
     private HashMap<Integer, String> cities;
