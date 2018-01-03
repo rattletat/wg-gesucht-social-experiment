@@ -14,34 +14,21 @@ import org.jsoup.nodes.FormElement;
 
 public class MessageSender {
 
-    public static final String filePathGroup1 = "./rsc/messages/group1/";
-    public static final String filePathGroup2 = "./rsc/messages/group2/";
+    private static final String filePathGroup1 = "./rsc/messages/group1/";
+    private static final String filePathGroup2 = "./rsc/messages/group2/";
+
+    private Properties persona;
+
+    public MessageSender(Properties persona) {
+        this.persona = persona;
+    }
 
     /**
      * Initiate send process for each stakeholder group,
      * by loading the files and iteratively calling 'sendMessage()'.
      * @see #sendMessage(File, Properties)
      */
-    public static void startSending() {
-        // Load personas into RAM
-        Properties persona1;
-        Properties persona2;
-        FileReader reader;
-        try {
-            reader = new FileReader(MessageWriter.filePathPersona1);
-            persona1 = new Properties();
-            persona1.load(reader);
-
-            reader = new FileReader(MessageWriter.filePathPersona2);
-            persona2 = new Properties();
-            persona2.load(reader);
-
-            reader.close();
-        } catch (Exception e) {
-            System.out.println("[ERROR] Failed loading personas.");
-            return;
-        }
-
+    public void startSending() {
         // Load messages into RAM
         File[] prop_files1;
         File[] prop_files2;
@@ -52,7 +39,7 @@ public class MessageSender {
             prop_files1 = group_dir1.listFiles();
             prop_files2 = group_dir2.listFiles();
         } catch (Exception e) {
-            System.out.println("[ERROR] Loading property files failed.");
+            System.err.println("[ERROR] Loading property files failed.");
             return;
         }
 
@@ -61,16 +48,16 @@ public class MessageSender {
         int counter2 = 0;
         try {
             for (File file : prop_files1) {
-                boolean result = sendMessage(file, persona1);
+                boolean result = sendMessage(file, persona);
                 if (result) counter1++;
             }
             for (File file : prop_files2) {
-                boolean result = sendMessage(file, persona2);
+                boolean result = sendMessage(file, persona);
                 if (result) counter2++;
             }
 
         } catch (Exception e) {
-            System.out.println("[ERROR] Sending messages failed.");
+            System.err.println("[ERROR] Sending messages failed.");
         }
         System.out.println("[Group1] Messages sent so far: " + counter1 + "/" + prop_files1.length);
         System.out.println("[Group2] Messages sent so far: " + counter2 + "/" + prop_files2.length);
@@ -85,21 +72,21 @@ public class MessageSender {
      * @param persona profile properties which should be used for filling out the form
      * @see #prompt(File, Properties)
      */
-    public static boolean sendMessage(File dir, Properties persona) {
+    private static boolean sendMessage(File dir, Properties persona) {
         // Load persona data
         String properties_path = dir.getAbsolutePath()
                                  + dir.getName() + ".properties";
-        Properties msg_probs = new Properties();
+        Properties msg_props = new Properties();
 
         try(FileReader reader = new FileReader(properties_path)) {
-            msg_probs.load(reader);
+            msg_props.load(reader);
         } catch (IOException io) {
             System.out.println("[ERROR] Loading offer data from memory failed.");
             return false;
         }
 
         // Extract form elements
-        String url = msg_probs.getProperty("url");
+        String url = msg_props.getProperty("url");
         Document doc = null;
         Response response = null;
         try {
@@ -143,7 +130,11 @@ public class MessageSender {
         String surname = persona.getProperty("surname");
         surname_form.val(surname);
 
-        String email = persona.getProperty("email");
+        String city_id = msg_props.getProperty("city_id");
+        String group_id = msg_props.getProperty("group_id");
+        String email_provider = msg_props.getProperty("email_provider");
+        String email = forename + "." + surname + "." + city_id + "."
+                       + group_id + "@" + email_provider;
         email_form.val(email);
 
         String msg = persona.getProperty("msg");
@@ -160,11 +151,11 @@ public class MessageSender {
             result = form.submit().cookies(response.cookies()).post();
             title = result.title();
         } catch (Exception e) {
-            System.out.println("[ERROR] Submitting form failed.");
+            System.out.println("[WARNING] Submitting form failed.");
             return prompt(dir, persona);
         }
         if (title != null && title.equals("Vielen Dank. Ihre Nachricht wurde gesendet.")) {
-            String stakeholder = msg_probs.getProperty("fullname");
+            String stakeholder = msg_props.getProperty("fullname");
             System.out.println("[INFO] Message sent: " + stakeholder);
             return true;
         } else {

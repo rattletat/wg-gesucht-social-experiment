@@ -58,7 +58,7 @@ public class CityCrawler {
             @Override
             public void run() {
                 MemoryManager.saveURLs(city_urls);
-                System.out.println("[INFO] Saved URL List.");
+                System.out.println("[INFO] Saved URL list.");
             }
         });
 
@@ -76,8 +76,6 @@ public class CityCrawler {
                     snd_url = String.join(".", url_back);
                     url = fst_url + String.valueOf(city_id) + snd_url;
                 } else url = this.city_urls.get(city_id) + ".0.1." + String.valueOf(page_number) + ".html";
-                System.out.println(url);
-
                 Document doc = null;
                 String redirected_url = "";
                 try {
