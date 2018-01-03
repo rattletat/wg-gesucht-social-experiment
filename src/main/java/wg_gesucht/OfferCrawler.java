@@ -1,5 +1,4 @@
-package main.java.wg_gesucht;
-
+package main.java.wg_gesucht; 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
@@ -16,7 +15,7 @@ public class OfferCrawler {
 
 	public static final String filePathCities = "./rsc/cities/";
 	public static final String filePathContacts = "./rsc/contacts";
-	public static final String baseContactFilepath = "./rsc/contacts/base.html";
+	public static final String baseContactFilepath = "./rsc/base.html";
 	public static final String lastContactInfoFilepath = "./rsc/contacts/lastContact.txt";
 	
 	
@@ -67,12 +66,14 @@ public class OfferCrawler {
 		    	String name = file.getName();
 		    	String[] splittedName = name.split("\\.");
 		    	String[] splittedName2 = splittedName[0].split("_", 2);
-		    	searchOffersInFile(doc, splittedName2[1]);
+                System.out.println(splittedName2[0]);
+                System.out.println(splittedName2[1]);
+		    	searchOffersInFile(doc, splittedName2[1], Integer.valueOf(splittedName2[0]));
 		    }
 		}
 	}
 	
-	public void searchOffersInFile(Document doc, String city)
+	public void searchOffersInFile(Document doc, String city, int city_id)
 	{
 		//print title
 		System.out.println("-------" + doc.title() + "-------");
@@ -80,7 +81,7 @@ public class OfferCrawler {
 		Elements headlines = doc.getElementsByTag("h3");
 		for (Element headline : headlines)
 		{
-			if (headline.attr("class").equals("headline headline-list-view noprint"))
+			if (headline.attr("class").equals("headline headline-list-view noprint truncate_title"))
 			{
 				//Element divcontainer =  headline.parent().parent();
 				Element link = headline.selectFirst("a");
@@ -95,7 +96,7 @@ public class OfferCrawler {
 				else
 				{
 					try {
-						saveContactInFile("https://www.wg-gesucht.de/"+url, "contact"+contactCounter+"_"+city);
+						saveContactInFile("https://www.wg-gesucht.de/"+url, "contact"+contactCounter+"_"+city+"_"+city_id);
 					} catch (IOException e) {
 						e.printStackTrace();
 					} catch (InterruptedException e) {

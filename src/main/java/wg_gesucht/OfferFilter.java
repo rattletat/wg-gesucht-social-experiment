@@ -2,6 +2,7 @@ package main.java.wg_gesucht;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
 
@@ -38,7 +39,11 @@ public class OfferFilter {
 				Document doc;
 				try {
 					doc = Jsoup.parse(f, "UTF-8", "");
-					checkDocAndAdd(doc);
+                    // Add city ID
+                    String[] parts = f.getName().split("_");
+                    String id_str = parts[parts.length-1].split("\\.")[0];
+                    int city_id = Integer.valueOf(id_str);
+					checkDocAndAdd(doc, city_id);
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
@@ -63,7 +68,7 @@ public class OfferFilter {
 		}
 	}
 	
-	public boolean checkDocAndAdd(Document doc) throws IOException, InterruptedException
+	public boolean checkDocAndAdd(Document doc, int city_id) throws IOException, InterruptedException
 	{
 		//check base.html
 		if (doc.title().equals("")) return false;
@@ -124,7 +129,7 @@ public class OfferFilter {
 			System.out.println("no contact link found: "+ doc.title());
 			return false;
 		} else {
-			filteredDocs.add(new DocBundle(doc, contactForm));
+			filteredDocs.add(new DocBundle(doc, contactForm, city_id));
 		}
 		
 		return true;
@@ -152,11 +157,21 @@ class DocBundle
 {
 	private Document offer_doc;
 	private Document contact_form;
+    private int city_id;
 	
-	public DocBundle(Document offer_doc, Document contact_form) {
+	public DocBundle(
+        Document offer_doc,
+        Document contact_form,
+        int city_id
+	) {
 		this.offer_doc = offer_doc;
 		this.contact_form = contact_form;
+        this.city_id = city_id;
 	}
+
+    public int getCityID() {
+        return this.city_id;
+    }
 
     public Document getOfferDoc() {
         return this.offer_doc;

@@ -2,15 +2,16 @@ package main.java.wg_gesucht;
 
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Properties;
 
 public class CrawlerLauncher {
 
     final static boolean startCityCrawler = false;
-    final static boolean startOfferCrawler = false;
-    final static boolean startOfferFilter = false;
-    final static boolean startMessageWriter = false;
-    final static boolean startFormFiller = true;
+    final static boolean startOfferCrawler = true;
+    final static boolean startOfferFilter = true;
+    final static boolean startMessageWriter = true;
+    final static boolean startFormFiller = false;
 
     public static void main(String[] args) throws IOException, InterruptedException {
 
@@ -26,6 +27,8 @@ public class CrawlerLauncher {
         personas[1].load(reader);
         */
 
+        ArrayList<Integer> cities = new ArrayList<Integer>();
+        cities.add(1);
         //load persona
         FileReader reader = new FileReader(MessageWriter.filePathPersona1);
         Properties persona = new Properties();
@@ -37,7 +40,7 @@ public class CrawlerLauncher {
         if (startCityCrawler) {
             System.out.println("[MODULE] CityCrawler activated.");
             CityCrawler crawler = new CityCrawler();
-            crawler.updateAll();
+            crawler.updateCityList(cities);//TODO: Only specific cities
             System.out.println("[MODULE] CityCrawler deactivated.");
         }
 
