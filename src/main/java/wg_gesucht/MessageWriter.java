@@ -127,6 +127,10 @@ public class MessageWriter {
         // Group properties
         msg_props.setProperty("group", String.valueOf(group_nr));
 
+        //delete ending point
+        if (contact_name.charAt(contact_name.length()-1) == '.')
+        	contact_name = contact_name.substring(0, contact_name.length() - 1);
+        
         String folder_to_save = filePathMessages + folder_name + "/" + contact_name + "/";
         File dir = new File(folder_to_save);
         dir.mkdirs();
