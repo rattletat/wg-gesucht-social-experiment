@@ -144,6 +144,6 @@ public class OfferFilter {
     }
 
     public DocBundle[] getDocBundle2() {
-        return this.group1;
+        return this.group2;
     }
 }
