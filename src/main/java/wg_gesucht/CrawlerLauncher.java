@@ -7,7 +7,7 @@ import java.util.Properties;
 public class CrawlerLauncher {
 
     final static boolean REFRESH_PERSONA = true;
-    final static boolean START_CITY_CRAWLER = true;
+    final static boolean START_CITY_CRAWLER = false;
     final static boolean START_OFFER_CRAWLER = true;
     final static boolean START_OFFER_FILTER = true;
     final static boolean START_MESSAGE_WRITER = true;
@@ -16,13 +16,13 @@ public class CrawlerLauncher {
     public static void main(String[] args) {
         // Setup cities
         ArrayList<Integer> cities = new ArrayList<Integer>();
-        cities.add(1);
+        cities.add(90);
 
         // Refresh persona
         if (REFRESH_PERSONA) {
             System.out.println("[MODULE] PersonaCreator activated.");
             try {
-                PersonaCreator.refreshPersona();
+// ?                PersonaCreator.refreshPersona();
                 System.out.println("[INFO] Successfully loaded persona.");
             } catch (Exception e) {
                 System.err.println("[ERROR] Refreshing persona failed.");

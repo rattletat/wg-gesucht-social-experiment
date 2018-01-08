@@ -10,8 +10,8 @@ import org.jsoup.nodes.Document;
 
 public class URLconnector {
 	
-	private static int min_waiting_sec = 5;
-	private static int variance = 5;
+	private static int min_waiting_sec = 8;
+	private static int variance = 10;
 	
 	private static StealthManager stealth_manager = new StealthManager();
 	
