@@ -119,7 +119,7 @@ public class MessageSender {
         if (form == null || salutation_form == null || forename_form == null
                 || surname_form == null || email_form == null || msg_form == null
                 || agb_form == null || copy_form == null) {
-            System.out.println("[WARNING] Could not find send form: " + msg_props.getProperty("fullname"));
+            System.out.println("[WARNING] Could not find send form: " + msg_props.getProperty("full_name"));
             MemoryManager.saveDocument(doc);
             return prompt(dir, persona);
         }
@@ -153,7 +153,7 @@ public class MessageSender {
 
         copy_form.attr("checked", true);
 
-        if(test_mode){
+        if (test_mode) {
             System.out.println();
             String stakeholder = msg_props.getProperty("full_name");
             System.out.println("[TESTMODE] Message for: " + stakeholder);
@@ -201,13 +201,18 @@ public class MessageSender {
         while (true) {
             System.out.println("[PROMPT] Retry? (y/n)");
             Scanner reader = new Scanner(System.in);
-            String input = reader.next();
+            String input = reader.nextLine();
             reader.close();
             if (input != null) {
                 char c = input.charAt(0);
-                if (c == 'n') return false;
-                if (c == 'y') return sendMessage(dir, persona);
-                else System.out.println("[PROMPT] Invalid input: '" + c + "'");
+                if (c == 'n') {
+                    System.out.println("Skipping...");
+                    return false;
+                }
+                if (c == 'y') {
+                    System.out.println("[INFO] Sending again.");
+                    return sendMessage(dir, persona);
+                } else System.out.println("[PROMPT] Invalid input: '" + c + "'");
             }
         }
     }
