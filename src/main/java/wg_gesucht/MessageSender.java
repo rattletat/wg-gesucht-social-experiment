@@ -104,7 +104,8 @@ public class MessageSender {
             doc = response.parse();
         } catch (Exception e) {
             System.out.println("[ERROR] Connection could not be established.");
-            return prompt(dir, persona);
+            // return prompt(dir, persona);
+            return false;
         }
 
         FormElement form = (FormElement) doc.selectFirst("#send_message_form");
@@ -121,7 +122,8 @@ public class MessageSender {
                 || agb_form == null || copy_form == null) {
             System.out.println("[WARNING] Could not find send form: " + msg_props.getProperty("full_name"));
             MemoryManager.saveDocument(doc);
-            return prompt(dir, persona);
+            // return prompt(dir, persona);
+            return false;
         }
 
         // Fill form elements
@@ -173,7 +175,8 @@ public class MessageSender {
             title = result.title();
         } catch (Exception e) {
             System.out.println("[WARNING] Submitting form failed.");
-            return prompt(dir, persona);
+            // return prompt(dir, persona);
+            return false;
         }
         if (title != null && title.equals("Vielen Dank. Ihre Nachricht wurde gesendet.")) {
             String stakeholder = msg_props.getProperty("full_name");
@@ -185,7 +188,8 @@ public class MessageSender {
             System.out.println("Title: " + title);
             MemoryManager.saveDocument(doc);
             System.out.println("[INFO] HTML saved under 'rsc/debug' for debugging.");
-            return prompt(dir, persona);
+            // return prompt(dir, persona);
+            return false;
         }
     }
 
