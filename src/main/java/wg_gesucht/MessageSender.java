@@ -45,8 +45,8 @@ public class MessageSender {
             return;
         }
 
-        if (prop_files1 == null || prop_files1.length == 0
-                || prop_files2 == null || prop_files2.length == 0) {
+        if ((prop_files1 == null || prop_files1.length == 0)
+                && (prop_files2 == null || prop_files2.length == 0)) {
             System.out.println("[WARNING] No messages to send. Aborting.");
             return;
         }
