@@ -14,7 +14,7 @@ import org.jsoup.nodes.FormElement;
 
 public class MessageSender {
 
-    private static final boolean test_mode = true;
+    private static final boolean test_mode = false;
 
     private static final String filePathGroup1 = "./rsc/messages/group1/";
     private static final String filePathGroup2 = "./rsc/messages/group2/";
@@ -119,10 +119,9 @@ public class MessageSender {
         if (form == null || salutation_form == null || forename_form == null
                 || surname_form == null || email_form == null || msg_form == null
                 || agb_form == null || copy_form == null) {
-            System.out.println("[WARNING] Could not find send form.");
+            System.out.println("[WARNING] Could not find send form: " + msg_props.getProperty("fullname"));
             MemoryManager.saveDocument(doc);
-            System.out.println((form == null)); // TODO: Retry bei Fehler
-            System.exit(1);
+            return prompt(dir, persona);
         }
 
         // Fill form elements
