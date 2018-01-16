@@ -1,4 +1,4 @@
-package main.java.wg_gesucht;
+package wg_gesucht;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -65,14 +65,14 @@ public class OfferCrawler {
                 String name = file.getName();
                 String[] splittedName = name.split("\\.");
                 String[] splittedName2 = splittedName[0].split("_", 2);
-                searchOffersInFile(doc, splittedName2[1], Integer.valueOf(splittedName2[0]));
+                searchOffersInFile(doc, splittedName2[1], Integer.valueOf(splittedName2[0]), name);
             }
         }
     }
 
-    public void searchOffersInFile(Document doc, String city, int city_id) {
+    public void searchOffersInFile(Document doc, String city, int city_id, String name) {
         // Print title
-        System.out.println("-------" + doc.title() + "-------");
+        System.out.println("-------" + doc.title() + " " + name + "-------");
 
         Elements headlines = doc.getElementsByTag("h3");
         for (Element headline : headlines) {
@@ -82,7 +82,7 @@ public class OfferCrawler {
                 String link_title = link.text();
                 if (link_title.length() > 50)
                     link_title = link_title.substring(0, 50) + "...";
-                System.out.println("[INFO] Crawled: " + link_title);
+                System.out.println("[INFO] Crawled contact " + contactCounter + ": " + link_title);
                 String url = link.attr("href");
 
                 if (contactCounter <= lastContact) {
