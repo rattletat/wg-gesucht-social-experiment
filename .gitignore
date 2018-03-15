@@ -22,6 +22,5 @@ target/
 
 rsc/cities/*
 rsc/contacts/*
-!rsc/contacts/base.html
 rsc/messages/*
-!rsc/messages
+rsc/debug/*
