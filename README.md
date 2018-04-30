@@ -1,16 +1,11 @@
 # Computational Social Science
 ## Racism in the housing market
 
-**To do's:**
-See issues.
+The paper gives information about the project and it's outcomes.
 
-**URL Manipulation**
-Example: *https://www.wg-gesucht.de/wohnungen-in-Bielefeld.10.2.1.3.html*
-- First number: City id
-- Second number:
-  - 0: WG
-  - 1: 1-Zimmer
-  - 2: Wohnung
-  - 3: Haus
-- Third number: ???
-- Fourth number: page number
+**THE TOOL:**
+Web scraper and automated tool written in Java for sending personalized messages on [wg-gesucht.de].
+
+Use it only for scientific purposes. Be responsible and consider ethical and legal issues.
+
+Not maintained.
