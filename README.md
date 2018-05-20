@@ -7,6 +7,6 @@ The paper gives information about the project and it's outcomes.
 
 Web scraper and automated tool written in Java for sending personalized messages on [wg-gesucht.de].
 
-Use it only for scientific purposes. Be responsible and consider ethical and legal issues.
+Use it for scientific purposes only. Be responsible and consider ethical and legal issues.
 
 Not maintained.
