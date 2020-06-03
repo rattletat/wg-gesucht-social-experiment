@@ -5,8 +5,6 @@ The paper gives information about the project and it's outcomes.
 
 **THE TOOL:**
 
-Web scraper and automated tool written in Java for sending personalized messages on [wg-gesucht.de].
+Web scraper and automated tool written in Java for sending personalized messages on [wg-gesucht.de](https://www.wg-gesucht.de/).
 
 Use it for scientific purposes only. Be responsible and consider ethical and legal issues.
-
-Not maintained.
